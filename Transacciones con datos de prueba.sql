@@ -148,8 +148,8 @@ START TRANSACTION;
 
 INSERT INTO `login` (`nom_usu`, `mail`, `tipo_usu`, `contrasenia`)
 VALUES
-('Amadeus', 'amadeus@gmail.com', 'almacenero', 'amadeus2005'),
-('Franco', 'franco@gmail.com', 'camionero', 'franco2005'),
-('Gaston', 'gastongolero@gmail.com', 'admin', 'gaston2006');
+('admin', 'administrador@gmail.com', 'admin', 'qds000L'),
+('camionero', 'camionero@gmail.com', 'camionero', 'HsuC32199'),
+('almacenero', 'almacenero@gmail.com', 'almacenero', 'HsuAL32199');
 
 COMMIT;
