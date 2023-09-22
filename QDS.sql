@@ -71,6 +71,7 @@ CREATE TABLE `paquete` (
   `detalles` varchar(150) DEFAULT NULL,
   `mail_destinatario` varchar(45) NOT NULL,
   `estado` varchar(20) DEFAULT 'En almacén cliente',
+  `fecha_recibido` date NOT NULL,
   `id_destino` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
