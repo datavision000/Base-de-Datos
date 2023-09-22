@@ -6,7 +6,7 @@ INSERT INTO `almacen_central` (`direccion`, `telefono`)
 VALUES
 ("Rivera 2902", "095937281"),
 ("Av. Italia 6934", "093569372"),
-("Burgues 1032", 095101834),
+("Burgues 1032", "095101834"),
 ("Thieabut 1856", "095291482"),
 ("Iguá 220", "095493174");
 
