@@ -1,4 +1,4 @@
-CREATE USER 'admin-backoffice'@'localhost' IDENTIFIED BY 'qds000Admin-L';
+CREATE USER 'backoffice'@'localhost' IDENTIFIED BY 'qds000Admin-L';
 CREATE USER 'login'@'localhost' IDENTIFIED BY 'qdsLoginAuth000-L';
 CREATE USER 'almacenes'@'localhost' IDENTIFIED BY 'qdsAlmAcEnEs000-L';
 CREATE USER 'transito'@'localhost' IDENTIFIED BY 'qdsTransito000-L';
