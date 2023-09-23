@@ -16,3 +16,10 @@ GRANT SELECT ON QDS.camion TO 'almacenes'@'localhost';
 GRANT SELECT ON QDS.plataforma TO 'almacenes'@'localhost';
 GRANT SELECT ON QDS.almacen_central TO 'almacenes'@'localhost';
 GRANT SELECT ON QDS.almacen_cliente TO 'almacenes'@'localhost';
+
+GRANT UPDATE (estado) ON QDS.paquete TO 'transito'@'localhost';
+GRANT UPDATE (estado) ON QDS.lote TO 'transito'@'localhost';
+GRANT SELECT ON QDS.trayecto TO 'transito'@'localhost';
+GRANT SELECT ON QDS.camionero TO 'transito'@'localhost';
+GRANT SELECT ON QDS.camion TO 'transito'@'localhost';
+GRANT SELECT ON QDS.ruta TO 'transito'@'localhost';
