@@ -246,12 +246,12 @@ ALTER TABLE `empresa_cliente`
 
 ALTER TABLE `lote`
   ADD CONSTRAINT `chk_valores_permitidos_tipo`
-  CHECK (`tipo` IN ('Vidrio', 'Líquido', 'Inflamable')),
+  CHECK (`tipo` IN (NULL, 'Vidrio', 'Líquido', 'Inflamable')),
   ADD CONSTRAINT `chk_valores_permitidos_fragil`
   CHECK (`fragil` IN ('Si', 'No'));
 
 ALTER TABLE `paquete`
   ADD CONSTRAINT `chk_valores_permitidos_tipo`
-  CHECK (`tipo` IN ('Vidrio', 'Líquido', 'Inflamable')),
+  CHECK (`tipo` IN (NULL, 'Vidrio', 'Líquido', 'Inflamable')),
   ADD CONSTRAINT `chk_valores_permitidos_fragil`
   CHECK (`fragil` IN ('Si', 'No'));
