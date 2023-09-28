@@ -51,6 +51,9 @@ VALUES
 ("STP-2644", 145, 15000),
 ("STP-6500", 180, 20000),
 ("STM-7765", 110, 80000);
+INSERT INTO `camion` (`matricula`, `volumen_disponible`, `peso_soportado`, `estado`)
+VALUES
+("STM-1234", 1234, 1234, "Fuera de servicio");
 
 COMMIT;
 

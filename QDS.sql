@@ -71,7 +71,7 @@ CREATE TABLE `paquete` (
   `detalles` varchar(150) DEFAULT NULL,
   `mail_destinatario` varchar(45) NOT NULL,
   `estado` varchar(20) DEFAULT 'En almacén cliente',
-  `fecha_recibido` date NOT NULL,
+  `fecha_recibido` date,
   `id_destino` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -144,8 +144,9 @@ CREATE TABLE `se_le_asigna` (
 );
 
 CREATE TABLE `llega` (
-	`id_trayecto` int PRIMARY KEY NOT NULL,
-  `id_plataforma` int NOT NULL
+	`id_trayecto` int NOT NULL,
+  `id_plataforma` int NOT NULL,
+   PRIMARY KEY (id_trayecto, id_plataforma)
 );
 
 CREATE TABLE `abarca` (
