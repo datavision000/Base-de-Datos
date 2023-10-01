@@ -1,5 +1,11 @@
 /*CONSULTA 1*/
-
+SELECT paquete.id_paquete, paquete.tipo, paquete.volumen, paquete.peso, paquete.direccion, paquete.fragil, paquete.detalles, paquete.mail_destinatario,
+paquete.estado, paquete.id_destino
+FROM lleva
+INNER JOIN forma ON lleva.id_lote = forma.id_lote
+INNER JOIN paquete ON forma.id_paquete = paquete.id_paquete
+INNER JOIN destino_paquete ON paquete.id_destino = destino_paquete.id_destino
+WHERE MONTH(lleva.fecha_llegada) = 5 AND YEAR(lleva.fecha_llegada) = 2023 AND destino_paquete.ciudad_destino = "Melo";
 
 /*CONSULTA 2*/
 
@@ -14,7 +20,15 @@ INNER JOIN camion ON transporta.id_camion = camion.id_camion
 WHERE MONTH(fecha_llegada)=6 AND id_plataforma=1;
 
 /*CONSULTA 5*/
-
+SELECT paquete.id_paquete, paquete.direccion, destino_paquete.departamento_destino, destino_paquete.ciudad_destino, forma.id_lote,
+lleva.id_plataforma, camion.id_camion, camion.matricula
+FROM paquete
+INNER JOIN destino_paquete ON paquete.id_destino = destino_paquete.id_destino
+INNER JOIN forma ON paquete.id_paquete = forma.id_paquete
+INNER JOIN transporta ON forma.id_lote = transporta.id_lote
+INNER JOIN lleva ON transporta.id_lote = lleva.id_lote
+INNER JOIN camion ON transporta.id_camion = camion.id_camion
+WHERE paquete.id_paquete=1;
 
 /*CONSULTA 6*/
 
