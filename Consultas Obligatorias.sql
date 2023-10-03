@@ -7,15 +7,17 @@ INNER JOIN paquete ON forma.id_paquete = paquete.id_paquete
 INNER JOIN destino_paquete ON paquete.id_destino = destino_paquete.id_destino
 WHERE MONTH(lleva.fecha_llegada) = 5 AND YEAR(lleva.fecha_llegada) = 2023 AND destino_paquete.ciudad_destino = "Melo";
 
-/*  CONSULTA 2
-SELECT *, COUNT(*) AS cantidad_filas
+/*CONSULTA 2*/
+SELECT *
 FROM paquete
 INNER JOIN forma ON paquete.id_paquete = forma.id_paquete
 INNER JOIN lleva ON forma.id_lote = lleva.id_lote
 WHERE YEAR(lleva.fecha_llegada) = 2023
-GROUP BY lleva.id_plataforma
-ORDER BY cantidad_filas DESC;  */
-
+ORDER BY (
+  SELECT COUNT(*)
+  FROM lleva AS ord
+  WHERE ord.id_plataforma = lleva.id_plataforma
+) DESC;
 
 /*CONSULTA 3*/
 SELECT id_camion, matricula, estado FROM camion;

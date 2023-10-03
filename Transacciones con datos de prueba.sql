@@ -26,21 +26,27 @@ VALUES
 
 COMMIT;
 
- -- Ingreso de tuplas en tabla 'plataforma'
+-- Ingreso de tuplas en tabla 'plataforma'
 
 START TRANSACTION;
 
 INSERT INTO `plataforma` (`direccion`, `volumen_maximo`, `departamento`, `telefono`)
 VALUES
 ("Humberto I 3928", 120000, "Montevideo", "095837122"),
-("Av. Del Mar 1839", 90000, "Maldonado", "092184932"),
+("Avenida Del Mar 1839", 90000, "Maldonado", "092184932"),
 ("Joaquín Artigas 1456", 110000, "Treinta y Tres", "094349548"),
 ("Milton Rusiñol 567", 100000, "Flores", "092183926"),
-("José Gómez 1832", 100000, "Durazno", "097857361");
+("Neyra 1204", 100000, "Durazno", "097888361"),
+("Porongos 213", 100000, "Montevideo", "097857214"),
+("Leguizamón 1872", 100000, "Montevideo", "093349851"),
+("José Gómez 222", 100000, "Montevideo", "094829183"),
+("Vuritos 1432", 100000, "Montevideo", "098493821"),
+("Avenida Brasil 1832", 100000, "Montevideo", "091238495");
+
 
 COMMIT;
 
- -- Ingreso de tuplas en tabla 'camion'
+-- Ingreso de tuplas en tabla 'camion'
 
 START TRANSACTION;
 
@@ -51,9 +57,15 @@ VALUES
 ("STP-2644", 145, 15000),
 ("STP-6500", 180, 20000),
 ("STM-7765", 110, 80000);
+
 INSERT INTO `camion` (`matricula`, `volumen_disponible`, `peso_soportado`, `estado`)
 VALUES
-("STM-1234", 1234, 1234, "Fuera de servicio");
+("STM-5743", 1234, 1234, "Fuera de servicio"),
+("STM-1234", 225, 373, "Fuera de servicio"),
+("STP-1276", 6226, 53, "Fuera de servicio"),
+("STM-6663", 54, 5959, "Fuera de servicio"),
+("STP-2312", 8448, 1234, "Fuera de servicio"),
+("STM-2612", 1234, 353, "Fuera de servicio");
 
 COMMIT;
 
@@ -97,7 +109,14 @@ INSERT INTO `lote` (`volumen`, `peso`, `fragil`, `fecha_ideal_traslado`, `hora_i
 VALUES
 ('67', '8', 'No', '2023-09-22', '16:00:00'),
 ('70', '56', 'No', '2023-10-31', '23:00:00'),
-('100', '40', 'No', '2023-11-15', '20:00:00');
+('100', '34', 'No', '2023-11-15', '20:00:00'),
+('130', '22', 'No', '2023-11-18', '20:00:00'),
+('43224', '5', 'No', '2023-11-25', '20:00:00'),
+('104320', '66', 'No', '2023-10-10', '20:00:00'),
+('41', '17', 'No', '2023-12-15', '20:00:00'),
+('222', '88', 'No', '2023-12-24', '20:00:00'),
+('100', '200', 'No', '2023-11-11', '20:00:00');
+
 
 COMMIT;
 
@@ -109,7 +128,9 @@ INSERT INTO `destino_paquete` (`departamento_destino`, `ciudad_destino`)
 VALUES
 ('Montevideo', 'Montevideo'),
 ('Maldonado', 'Punta del Este'),
-('Canelones', 'Atlántida');
+('Canelones', 'Atlántida'),
+('Cerro Largo', 'Melo'),
+('Maldonado', 'Piriápolis');
 
 COMMIT;
 
@@ -127,7 +148,12 @@ VALUES
 INSERT INTO `paquete` (`codigo_seguimiento`, `volumen`, `peso`, `direccion`, `fragil`, `mail_destinatario`)
 VALUES
 ("FKALO83NAK17", '800', '500', 'Bv. José Batlle y Ordoñez 1302', 'No', 'fredericJhonson@gmail.com'),
-("40396LAJFIQ3", '260', '400', 'Felipe Sanguinetti 2043', 'No', 'filtungis@gmail.com');
+("GLAPRO492032", '55', '500', 'Av. Italia 3423', 'No', 'jelou763@gmail.com'),
+("FALF928FKAPW", '8030', '500', 'Thiebaut 4532', 'No', 'carl@gmail.com'),
+("HLFK33456LAK", '8020', '500', 'Estivao 222', 'No', 'ruti@gmail.com'),
+("FLAOPLDJSPOA", '22', '500', 'Laureles 2111', 'No', 'nast@gmail.com'),
+("FAPO34OJI348", '66', '500', 'Juaripé 2312', 'No', 'fartux@gmail.com'),
+("XMCPAO4IO3J2", '99', '400', 'Calle 3242', 'No', 'lalo2312@gmail.com');
 
 COMMIT;
 
@@ -158,18 +184,30 @@ VALUES
 COMMIT;
 
 
-INSERT INTO `destino_paquete` (`departamento_destino`, `ciudad_destino`)
+INSERT INTO `forma` (`id_paquete`, `id_lote`)
 VALUES
-('Cerro Largo', 'Melo');
+('1', '5'),
+('3', '3'),
+('6', '3'),
+('7', '3'),
+('4', '5'),
+('2', '5'),
+('5', '6'),
+('8', '9'),
+('9', '9'),
+('10', '8');
 
-INSERT INTO `paquete` (`id_paquete`, `codigo_seguimiento`, `tipo`, `volumen`, `peso`, `direccion`, `fragil`, `detalles`, `mail_destinatario`, `estado`, `fecha_recibido`, `id_destino`) VALUES (NULL, '3KF8ALWO2918', NULL, '465', '232', 'Hola 1234', 'No', NULL, 'hola@gmail.com', 'En almacén cliente', NULL, '4'), (NULL, '39AL29GK39AK', NULL, '777', '23', 'que paso 2351', 'No', NULL, 'gor@gmail.com', 'En almacén cliente', NULL, '4');
-INSERT INTO `forma` (`id_paquete`, `id_lote`) VALUES ('3', '3');
-INSERT INTO `forma` (`id_paquete`, `id_lote`) VALUES ('6', '3');
-INSERT INTO `forma` (`id_paquete`, `id_lote`) VALUES ('7', '3');
-INSERT INTO `forma` (`id_paquete`, `id_lote`) VALUES ('4', '5');
-INSERT INTO `transporta` (`id_lote`, `id_camion`) VALUES ('3', '6');
-INSERT INTO `transporta` (`id_lote`, `id_camion`) VALUES ('5', '6');
+INSERT INTO `transporta` (`id_lote`, `id_camion`)
+VALUES
+('3', '3'),
+('5', '3'),
+('6', '9'),
+('8', '9'),
+('9', '4');
 
-INSERT INTO `lleva` (`id_lote`, `id_plataforma`, `fecha_llegada`, `hora_llegada`) VALUES ('3', '3', '2023-05-23', '17:46:06');
-INSERT INTO `lleva` (`id_lote`, `id_plataforma`, `fecha_llegada`, `hora_llegada`) VALUES ('5', '3', '2023-10-04', '14:47:17');
-INSERT INTO `forma` (`id_paquete`, `id_lote`) VALUES ('1', '5');
+INSERT INTO `lleva` (`id_lote`, `id_plataforma`, `fecha_llegada`)
+VALUES
+('9', '9', '2023-05-23'),
+('8', '9', '2023-05-23'),
+('6', '8', '2023-06-08'),
+('5', '5', NULL);
