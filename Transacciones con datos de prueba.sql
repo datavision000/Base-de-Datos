@@ -2,13 +2,13 @@
 
 START TRANSACTION;
 
-INSERT INTO `almacen_central` (`direccion`, `telefono`)
+INSERT INTO `almacen_central` (`numero_almacen`, `telefono`)
 VALUES
-("Rivera 2902", "095937281"),
-("Av. Italia 6934", "093569372"),
-("Burgues 1032", "095101834"),
-("Thieabut 1856", "095291482"),
-("Iguá 220", "095493174");
+(44, "095937281"),
+(55, "093569372"),
+(78, "095101834"),
+(198, "095291482"),
+(77, "095493174");
 
 COMMIT;
 
@@ -117,17 +117,17 @@ COMMIT;
 
 START TRANSACTION;
 
-INSERT INTO `paquete` (`tipo`, `volumen`, `peso`, `direccion`, `fragil`, `detalles`, `mail_destinatario`)
+INSERT INTO `paquete` (`codigo_seguimiento`, `tipo`, `volumen`, `peso`, `direccion`, `fragil`, `detalles`, `mail_destinatario`)
 VALUES
-('Liquido', '88', '100', 'Av. Italia 3474', 'Si', 'Nitrógeno líquido', 'hhamilton@gmail.com'),
-('Vidrio', '80', '22', 'Estivao 1204', 'Si', 'Ventanas blancas', 'peterparker44@gmail.com');
-INSERT INTO `paquete` (`tipo`, `volumen`, `peso`, `direccion`, `fragil`, `detalles`, `mail_destinatario`, `id_destino`)
+("FK2L5KSD30FL", 'Liquido', '88', '100', 'Av. Italia 3474', 'Si', 'Nitrógeno líquido', 'hhamilton@gmail.com'),
+("39ALFJ281745", 'Vidrio', '80', '22', 'Estivao 1204', 'Si', 'Ventanas blancas', 'peterparker44@gmail.com');
+INSERT INTO `paquete` (`codigo_seguimiento`,`tipo`, `volumen`, `peso`, `direccion`, `fragil`, `detalles`, `mail_destinatario`, `id_destino`)
 VALUES
-('Vidrio', '78', '66', 'Rivera 5675', 'Si', 'Ventanas negras', 'charlesion566@gmail.com', 3);
-INSERT INTO `paquete` (`volumen`, `peso`, `direccion`, `fragil`, `mail_destinatario`)
+("3KA9GL2759AJ", 'Vidrio', '78', '66', 'Rivera 5675', 'Si', 'Ventanas negras', 'charlesion566@gmail.com', 3);
+INSERT INTO `paquete` (`codigo_seguimiento`, `volumen`, `peso`, `direccion`, `fragil`, `mail_destinatario`)
 VALUES
-('800', '500', 'Bv. José Batlle y Ordoñez 1302', 'No', 'fredericJhonson@gmail.com'),
-('260', '400', 'Felipe Sanguinetti 2043', 'No', 'filtungis@gmail.com');
+("FKALO83NAK17", '800', '500', 'Bv. José Batlle y Ordoñez 1302', 'No', 'fredericJhonson@gmail.com'),
+("40396LAJFIQ3", '260', '400', 'Felipe Sanguinetti 2043', 'No', 'filtungis@gmail.com');
 
 COMMIT;
 
@@ -156,3 +156,20 @@ VALUES
 ('almacenero', 'almacenero@gmail.com', 'almacenero', 'HsuAL32199');
 
 COMMIT;
+
+
+INSERT INTO `destino_paquete` (`departamento_destino`, `ciudad_destino`)
+VALUES
+('Cerro Largo', 'Melo');
+
+INSERT INTO `paquete` (`id_paquete`, `codigo_seguimiento`, `tipo`, `volumen`, `peso`, `direccion`, `fragil`, `detalles`, `mail_destinatario`, `estado`, `fecha_recibido`, `id_destino`) VALUES (NULL, '3KF8ALWO2918', NULL, '465', '232', 'Hola 1234', 'No', NULL, 'hola@gmail.com', 'En almacén cliente', NULL, '4'), (NULL, '39AL29GK39AK', NULL, '777', '23', 'que paso 2351', 'No', NULL, 'gor@gmail.com', 'En almacén cliente', NULL, '4');
+INSERT INTO `forma` (`id_paquete`, `id_lote`) VALUES ('3', '3');
+INSERT INTO `forma` (`id_paquete`, `id_lote`) VALUES ('6', '3');
+INSERT INTO `forma` (`id_paquete`, `id_lote`) VALUES ('7', '3');
+INSERT INTO `forma` (`id_paquete`, `id_lote`) VALUES ('4', '5');
+INSERT INTO `transporta` (`id_lote`, `id_camion`) VALUES ('3', '6');
+INSERT INTO `transporta` (`id_lote`, `id_camion`) VALUES ('5', '6');
+
+INSERT INTO `lleva` (`id_lote`, `id_plataforma`, `fecha_llegada`, `hora_llegada`) VALUES ('3', '3', '2023-05-23', '17:46:06');
+INSERT INTO `lleva` (`id_lote`, `id_plataforma`, `fecha_llegada`, `hora_llegada`) VALUES ('5', '3', '2023-10-04', '14:47:17');
+INSERT INTO `forma` (`id_paquete`, `id_lote`) VALUES ('1', '5');

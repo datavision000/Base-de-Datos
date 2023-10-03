@@ -7,7 +7,7 @@ USE `QDS`;
 
 CREATE TABLE `almacen_central` (
   `id_almacen_central` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `direccion` varchar(65) NOT NULL,
+  `numero_almacen` int UNIQUE NOT NULL,
   `telefono` varchar(20) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -63,6 +63,7 @@ CREATE TABLE `lote` (
 
 CREATE TABLE `paquete` (
   `id_paquete` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `codigo_seguimiento` varchar (12) UNIQUE NOT NULL,
   `tipo` varchar(30) DEFAULT NULL,
   `volumen` varchar(10) NOT NULL,
   `peso` varchar(10) NOT NULL,
@@ -78,7 +79,8 @@ CREATE TABLE `paquete` (
 CREATE TABLE `destino_paquete` (
   `id_destino` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `departamento_destino` varchar(30) NOT NULL,
-  `ciudad_destino` varchar(30) NOT NULL
+  `ciudad_destino` varchar(30) NOT NULL,
+  UNIQUE (`departamento_destino`, `ciudad_destino`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `ruta` (
@@ -192,7 +194,7 @@ ALTER TABLE `maneja`
     ADD CONSTRAINT `fk_id_camionero` FOREIGN KEY (id_camionero) REFERENCES camionero(id_camionero) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `transporta`
-    ADD CONSTRAINT `fk_id_lote3` FOREIGN KEY (id_lote) REFERENCES lote(id_lote) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    ADD CONSTRAINT `fk_id_lote3` FOREIGN KEY (id_lote) REFERENCES forma(id_lote) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_id_camion2` FOREIGN KEY (id_camion) REFERENCES camion(id_camion) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `se_le_asigna`
