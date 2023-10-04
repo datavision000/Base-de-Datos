@@ -30,7 +30,7 @@ CREATE TABLE `camion` (
   `matricula` varchar(8) NOT NULL UNIQUE,
   `volumen_disponible` int NOT NULL,
   `peso_soportado` int NOT NULL,
-  `estado` varchar(20) DEFAULT NULL
+  `estado` varchar(20) DEFAULT 'Operativo' NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `camionero` (

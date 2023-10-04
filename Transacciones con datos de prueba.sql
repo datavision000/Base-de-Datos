@@ -211,3 +211,9 @@ VALUES
 ('8', '9', '2023-05-23'),
 ('6', '8', '2023-06-08'),
 ('5', '5', NULL);
+
+
+INSERT INTO `maneja` (`id_camion`, `id_camionero`, `fecha_inicio_manejo`, `hora_inicio_manejo`, `fecha_fin_manejo`, `hora_fin_manejo`)
+VALUES
+('1', '1', '2023-10-02', '15:31:42', '2023-10-03', '00:31:42'),
+('2', '2', '2023-10-02', '15:31:42', '2023-10-03', '00:31:42');
