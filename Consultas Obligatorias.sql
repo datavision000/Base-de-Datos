@@ -27,7 +27,7 @@ SELECT id_camion, matricula, estado FROM camion;
 SELECT camion.id_camion, camion.matricula, camion.volumen_disponible, camion.peso_soportado, camion.estado FROM lleva 
 INNER JOIN transporta ON lleva.id_lote = transporta.id_lote
 INNER JOIN camion ON transporta.id_camion = camion.id_camion
-WHERE MONTH(fecha_llegada)=6 AND id_plataforma=1;
+WHERE MONTH(fecha_llegada)=6 AND id_plataforma=8;
 
 /*CONSULTA 5*/
 SELECT paquete.id_paquete, paquete.direccion, destino_paquete.departamento_destino, destino_paquete.ciudad_destino, forma.id_lote,
@@ -38,7 +38,7 @@ INNER JOIN forma ON paquete.id_paquete = forma.id_paquete
 INNER JOIN transporta ON forma.id_lote = transporta.id_lote
 INNER JOIN lleva ON transporta.id_lote = lleva.id_lote
 INNER JOIN camion ON transporta.id_camion = camion.id_camion
-WHERE paquete.id_paquete=1;
+WHERE paquete.id_paquete=9;
 
 /*CONSULTA 6*/
 SELECT paquete.id_paquete, forma.id_lote, camion.matricula, lleva.id_plataforma, plataforma.direccion, lote.estado
@@ -62,7 +62,7 @@ SELECT matricula FROM camion WHERE estado = "Fuera de servicio";
 /*CONSULTA 9*/
 SELECT *
 FROM  camion
-WHERE id_camion not in(select id_camion from maneja) and estado = "Operativo";
+WHERE id_camion not in(select id_camion from maneja);
 
 /*CONSULTA 10*/
 SELECT plataforma.id_plataforma, plataforma.departamento, plataforma.direccion, plataforma.volumen_maximo, plataforma.telefono

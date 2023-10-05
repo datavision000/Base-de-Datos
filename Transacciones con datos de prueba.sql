@@ -150,10 +150,12 @@ VALUES
 ("FKALO83NAK17", '800', '500', 'Bv. José Batlle y Ordoñez 1302', 'No', 'fredericJhonson@gmail.com'),
 ("GLAPRO492032", '55', '500', 'Av. Italia 3423', 'No', 'jelou763@gmail.com'),
 ("FALF928FKAPW", '8030', '500', 'Thiebaut 4532', 'No', 'carl@gmail.com'),
-("HLFK33456LAK", '8020', '500', 'Estivao 222', 'No', 'ruti@gmail.com'),
-("FLAOPLDJSPOA", '22', '500', 'Laureles 2111', 'No', 'nast@gmail.com'),
-("FAPO34OJI348", '66', '500', 'Juaripé 2312', 'No', 'fartux@gmail.com'),
-("XMCPAO4IO3J2", '99', '400', 'Calle 3242', 'No', 'lalo2312@gmail.com');
+("HLFK33456LAK", '8020', '500', 'Estivao 222', 'No', 'ruti@gmail.com');
+INSERT INTO `paquete` (`codigo_seguimiento`, `volumen`, `peso`, `direccion`, `fragil`, `mail_destinatario`, `id_destino`)
+VALUES
+("FLAOPLDJSPOA", '22', '500', 'Laureles 2111', 'No', 'nast@gmail.com', 4),
+("FAPO34OJI348", '66', '500', 'Juaripé 2312', 'No', 'fartux@gmail.com', 4),
+("XMCPAO4IO3J2", '99', '400', 'Calle 3242', 'No', 'lalo2312@gmail.com', 4);
 
 COMMIT;
 
@@ -194,21 +196,18 @@ VALUES
 ('2', '5'),
 ('5', '6'),
 ('8', '9'),
-('9', '9'),
-('10', '8');
+('9', '9');
 
 INSERT INTO `transporta` (`id_lote`, `id_camion`)
 VALUES
 ('3', '3'),
 ('5', '3'),
 ('6', '9'),
-('8', '9'),
 ('9', '4');
 
 INSERT INTO `lleva` (`id_lote`, `id_plataforma`, `fecha_llegada`)
 VALUES
 ('9', '9', '2023-05-23'),
-('8', '9', '2023-05-23'),
 ('6', '8', '2023-06-08'),
 ('5', '5', NULL);
 
@@ -217,3 +216,15 @@ INSERT INTO `maneja` (`id_camion`, `id_camionero`, `fecha_inicio_manejo`, `hora_
 VALUES
 ('1', '1', '2023-10-02', '15:31:42', '2023-10-03', '00:31:42'),
 ('2', '2', '2023-10-02', '15:31:42', '2023-10-03', '00:31:42');
+
+INSERT INTO `trayecto` (`distancia_recorrida`)
+VALUES
+('12000'),
+('13500'),
+('10000'),
+('9500'),
+('12500');
+
+INSERT INTO `llega` (`id_trayecto`, `id_plataforma`) VALUES ('1', '1');
+INSERT INTO `llega` (`id_trayecto`, `id_plataforma`) VALUES ('1', '2');
+INSERT INTO `llega` (`id_trayecto`, `id_plataforma`) VALUES ('2', '1');

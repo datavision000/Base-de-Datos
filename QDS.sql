@@ -30,7 +30,7 @@ CREATE TABLE `camion` (
   `matricula` varchar(8) NOT NULL UNIQUE,
   `volumen_disponible` int NOT NULL,
   `peso_soportado` int NOT NULL,
-  `estado` varchar(20) DEFAULT 'Operativo' NOT NULL
+  `estado` varchar(20) DEFAULT 'Disponible' NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `camionero` (
@@ -89,7 +89,8 @@ CREATE TABLE `ruta` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `trayecto` (
-  `id_trayecto` int NOT NULL PRIMARY KEY AUTO_INCREMENT
+  `id_trayecto` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `distancia_recorrida` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `trayecto_departamentos` (
