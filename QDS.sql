@@ -52,13 +52,15 @@ CREATE TABLE `lote` (
   `id_lote` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `cant_paquetes` int DEFAULT NULL,
   `tipo` varchar(20) DEFAULT NULL,
-  `estado` varchar(20) DEFAULT 'En almacén central',
-  `volumen` int NOT NULL,
-  `peso` int NOT NULL,
+  `estado` varchar(35) DEFAULT 'En almacén central',
+  `volumen` int,
+  `peso` int,
   `fragil` varchar(2) NOT NULL,
   `detalles` varchar(150) DEFAULT NULL,
   `fecha_ideal_traslado` date DEFAULT NULL,
-  `hora_ideal_traslado` time DEFAULT NULL
+  `hora_ideal_traslado` time DEFAULT NULL,
+  `fecha_recibido` date DEFAULT NULL,
+  `hora_recibido` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `paquete` (
@@ -71,8 +73,7 @@ CREATE TABLE `paquete` (
   `fragil` varchar(2) NOT NULL,
   `detalles` varchar(150) DEFAULT NULL,
   `mail_destinatario` varchar(45) NOT NULL,
-  `estado` varchar(20) DEFAULT 'En almacén cliente',
-  `fecha_recibido` date,
+  `estado` varchar(35) DEFAULT 'En almacén cliente',
   `id_destino` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
