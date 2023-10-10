@@ -53,8 +53,8 @@ CREATE TABLE `lote` (
   `cant_paquetes` int DEFAULT NULL,
   `tipo` varchar(20) DEFAULT NULL,
   `estado` varchar(35) DEFAULT 'En almacén central',
-  `volumen` int,
-  `peso` int,
+  `volumen` int DEFAULT '0',
+  `peso` int DEFAULT '0',
   `fragil` varchar(2) NOT NULL,
   `detalles` varchar(150) DEFAULT NULL,
   `fecha_ideal_traslado` date DEFAULT NULL,
@@ -260,3 +260,31 @@ ALTER TABLE `paquete`
   CHECK (`tipo` IN (NULL, 'Vidrio', 'Líquido', 'Inflamable')),
   ADD CONSTRAINT `chk_valores_permitidos_fragil`
   CHECK (`fragil` IN ('Si', 'No'));
+
+
+CREATE TRIGGER tr_actualizar_estado_lote
+BEFORE UPDATE
+ON lote
+FOR EACH ROW
+BEGIN
+    IF NEW.fecha_recibido IS NOT NULL AND OLD.fecha_recibido IS NULL
+    THEN
+        SET NEW.estado = 'Entregado';
+    END IF;
+END;
+
+/*
+CREATE TRIGGER tr_actualizar_paquetes
+BEFORE UPDATE ON lote
+FOR EACH ROW
+BEGIN
+    -- Verificar si el estado de lote ha cambiado a "Entregado"
+    IF NEW.estado = 'Entregado' AND OLD.estado != 'Entregado'
+    THEN
+        -- Actualizar el estado de los paquetes asociados
+        UPDATE paquete
+        SET estado = 'Entregado'
+        WHERE id_lote = NEW.id_lote;
+    END IF;
+END;
+*/
