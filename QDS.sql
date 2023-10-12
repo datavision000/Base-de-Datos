@@ -314,6 +314,32 @@ END;
 */
 
 DELIMITER //
+CREATE TRIGGER `estado_paquete1`
+AFTER INSERT
+ON `forma`
+FOR EACH ROW
+BEGIN
+  UPDATE `paquete`
+  SET estado = 'En almacén central (lote)'
+  WHERE id_paquete = NEW.id_paquete;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER `estado_paquete1`
+AFTER DELETE
+ON `forma`
+FOR EACH ROW
+BEGIN
+  UPDATE `paquete`
+  SET estado = 'En almacén central'
+  WHERE id_paquete = NEW.id_paquete;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
 CREATE TRIGGER `suma_peso_lote`
 AFTER INSERT
 ON `forma`
@@ -422,3 +448,4 @@ BEGIN
 END;
 //
 DELIMITER ;
+
