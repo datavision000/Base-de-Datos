@@ -227,6 +227,7 @@ VALUES
 ('12500');
 
 INSERT INTO `llega` (`id_trayecto`, `id_plataforma`)
-VALUES ('1', '1'),
-VALUES ('1', '2'),
-VALUES ('2', '1');
+VALUES
+('1', '1'),
+('1', '2'),
+('2', '1');

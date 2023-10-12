@@ -327,14 +327,14 @@ END;
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER `estado_paquete1`
+CREATE TRIGGER `estado_paquete2`
 AFTER DELETE
 ON `forma`
 FOR EACH ROW
 BEGIN
   UPDATE `paquete`
   SET estado = 'En almacén central'
-  WHERE id_paquete = NEW.id_paquete;
+  WHERE id_paquete = OLD.id_paquete;
 END;
 //
 DELIMITER ;
