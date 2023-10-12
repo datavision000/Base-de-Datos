@@ -261,10 +261,32 @@ ALTER TABLE `paquete`
   ADD CONSTRAINT `chk_valores_permitidos_fragil`
   CHECK (`fragil` IN ('Si', 'No'));
 
+ALTER TABLE `paquete`
+  ADD CONSTRAINT `chk_paquete_positivo_peso`
+  CHECK (`peso` > 0);
 
-CREATE TRIGGER tr_actualizar_estado_lote
+ALTER TABLE `paquete`
+  ADD CONSTRAINT `chk_paquete_positivo_volumen`
+  CHECK (`volumen` > 0);
+
+ALTER TABLE `lote`
+  ADD CONSTRAINT `chk_lote_positivo_peso`
+  CHECK (`peso` > 0);
+
+ALTER TABLE `lote`
+  ADD CONSTRAINT `chk_lote_positivo_volumen`
+  CHECK (`volumen` > 0);
+
+ALTER TABLE `lote`
+  ADD CONSTRAINT `chk_lote_cant_paquetes`
+  CHECK (`cant_paquetes` > 0);
+
+-- Creación de triggers
+
+DELIMITER //
+CREATE TRIGGER `tr_actualizar_estado_lote`
 BEFORE UPDATE
-ON lote
+ON `lote`
 FOR EACH ROW
 BEGIN
     IF NEW.fecha_recibido IS NOT NULL AND OLD.fecha_recibido IS NULL
@@ -272,6 +294,8 @@ BEGIN
         SET NEW.estado = 'Entregado';
     END IF;
 END;
+//
+DELIMITER ;
 
 /*
 CREATE TRIGGER tr_actualizar_paquetes
