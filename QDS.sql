@@ -50,7 +50,7 @@ CREATE TABLE `empresa_cliente` (
 
 CREATE TABLE `lote` (
   `id_lote` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `cant_paquetes` int DEFAULT NULL,
+  `cant_paquetes` int DEFAULT '0',
   `tipo` varchar(20) DEFAULT NULL,
   `estado` varchar(35) DEFAULT 'En almacén central',
   `volumen` int DEFAULT '0',
@@ -196,7 +196,7 @@ ALTER TABLE `maneja`
     ADD CONSTRAINT `fk_id_camionero` FOREIGN KEY (id_camionero) REFERENCES camionero(id_camionero) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `transporta`
-    ADD CONSTRAINT `fk_id_lote3` FOREIGN KEY (id_lote) REFERENCES forma(id_lote) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    ADD CONSTRAINT `fk_id_lote3` FOREIGN KEY (id_lote) REFERENCES lote(id_lote) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_id_camion2` FOREIGN KEY (id_camion) REFERENCES camion(id_camion) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `se_le_asigna`
@@ -263,23 +263,23 @@ ALTER TABLE `paquete`
 
 ALTER TABLE `paquete`
   ADD CONSTRAINT `chk_paquete_positivo_peso`
-  CHECK (`peso` > 0);
+  CHECK (`peso` >= 0);
 
 ALTER TABLE `paquete`
   ADD CONSTRAINT `chk_paquete_positivo_volumen`
-  CHECK (`volumen` > 0);
+  CHECK (`volumen` >= 0);
 
 ALTER TABLE `lote`
   ADD CONSTRAINT `chk_lote_positivo_peso`
-  CHECK (`peso` > 0);
+  CHECK (`peso` >= 0);
 
 ALTER TABLE `lote`
   ADD CONSTRAINT `chk_lote_positivo_volumen`
-  CHECK (`volumen` > 0);
+  CHECK (`volumen` >= 0);
 
 ALTER TABLE `lote`
   ADD CONSTRAINT `chk_lote_cant_paquetes`
-  CHECK (`cant_paquetes` > 0);
+  CHECK (`cant_paquetes` >= 0);
 
 -- Creación de triggers
 
@@ -312,3 +312,113 @@ BEGIN
     END IF;
 END;
 */
+
+DELIMITER //
+CREATE TRIGGER `suma_peso_lote`
+AFTER INSERT
+ON `forma`
+FOR EACH ROW
+BEGIN
+  SET @total_peso := (
+    SELECT SUM(CAST(paquete.peso AS SIGNED))
+    FROM `paquete`
+    WHERE paquete.id_paquete = NEW.id_paquete
+  );
+
+  UPDATE `lote`
+  SET peso = peso + @total_peso
+  WHERE lote.id_lote = NEW.id_lote;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER `resta_peso_lote`
+AFTER DELETE
+ON `forma`
+FOR EACH ROW
+BEGIN
+  SET @total_peso := (
+    SELECT SUM(CAST(paquete.peso AS SIGNED))
+    FROM `paquete`
+    WHERE paquete.id_paquete = OLD.id_paquete
+  );
+
+  UPDATE `lote`
+  SET peso = peso - @total_peso
+  WHERE lote.id_lote = OLD.id_lote;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER `suma_volumen_lote`
+AFTER INSERT
+ON `forma`
+FOR EACH ROW
+BEGIN
+  SET @total_volumen := (
+    SELECT SUM(CAST(paquete.volumen AS SIGNED))
+    FROM `paquete`
+    WHERE paquete.id_paquete = NEW.id_paquete
+  );
+
+  UPDATE `lote`
+  SET volumen = volumen + @total_volumen
+  WHERE lote.id_lote = NEW.id_lote;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER `resta_volumen_lote`
+AFTER DELETE
+ON `forma`
+FOR EACH ROW
+BEGIN
+  SET @total_volumen := (
+    SELECT SUM(CAST(paquete.volumen AS SIGNED))
+    FROM `paquete`
+    WHERE paquete.id_paquete = OLD.id_paquete
+  );
+
+  UPDATE `lote`
+  SET volumen = volumen - @total_volumen
+  WHERE lote.id_lote = OLD.id_lote;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER `cant_paquetes_lote_agregar`
+AFTER INSERT
+ON `forma`
+FOR EACH ROW
+BEGIN
+  UPDATE `lote`
+  SET cant_paquetes = (
+    SELECT COUNT(*)
+    FROM `forma`
+    WHERE id_lote = NEW.id_lote
+  )
+  WHERE lote.id_lote = NEW.id_lote;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER `cant_paquetes_lote_eliminar`
+AFTER DELETE
+ON `forma`
+FOR EACH ROW
+BEGIN
+  UPDATE `lote`
+  SET cant_paquetes = (
+    SELECT COUNT(*)
+    FROM `forma`
+    WHERE id_lote = OLD.id_lote
+  )
+  WHERE lote.id_lote = OLD.id_lote;
+END;
+//
+DELIMITER ;
