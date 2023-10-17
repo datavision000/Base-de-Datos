@@ -1,5 +1,3 @@
--- Creacion y uso de la base de datos 'QDS'
-
 CREATE DATABASE `QDS`;
 USE `QDS`;
 
@@ -84,14 +82,12 @@ CREATE TABLE `destino_paquete` (
   UNIQUE (`departamento_destino`, `ciudad_destino`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `ruta` (
-  `id_ruta` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `nom_ruta` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 CREATE TABLE `trayecto` (
   `id_trayecto` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `distancia_recorrida` int NOT NULL
+  `destino` varchar(80) NOT NULL,
+  `destinos_intermedios` MEDIUMTEXT DEFAULT NULL,
+  `distancia_recorrida` int NOT NULL,
+  `duracion_total` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `trayecto_departamentos` (
@@ -153,12 +149,6 @@ CREATE TABLE `llega` (
    PRIMARY KEY (id_trayecto, id_plataforma)
 );
 
-CREATE TABLE `abarca` (
-	`id_ruta` int NOT NULL,
-    `id_trayecto` int NOT NULL,
-    PRIMARY KEY (id_ruta, id_trayecto)
-);
-
 CREATE TABLE `lleva` (
 	`id_lote` int PRIMARY KEY NOT NULL,
   `id_plataforma` int NOT NULL,
@@ -207,10 +197,6 @@ ALTER TABLE `llega`
     ADD CONSTRAINT `fk_id_trayecto3` FOREIGN KEY (id_trayecto) REFERENCES trayecto(id_trayecto) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_id_plataforma2` FOREIGN KEY (id_plataforma) REFERENCES plataforma(id_plataforma) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-ALTER TABLE `abarca`
-    ADD CONSTRAINT `fk_id_ruta` FOREIGN KEY (id_ruta) REFERENCES ruta(id_ruta) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    ADD CONSTRAINT `fk_id_trayecto2` FOREIGN KEY (id_trayecto) REFERENCES trayecto(id_trayecto) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
 ALTER TABLE `lleva`
     ADD CONSTRAINT `fk_id_lote4` FOREIGN KEY (id_lote) REFERENCES transporta(id_lote) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_id_plataforma` FOREIGN KEY (id_plataforma) REFERENCES plataforma(id_plataforma) ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -238,15 +224,15 @@ ALTER TABLE `camionero`
   CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');
  
 ALTER TABLE `login`
-  ADD CONSTRAINT `chk_correo_electronico`
+  ADD CONSTRAINT `chk_correo_electronico2`
   CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');
  
 ALTER TABLE `paquete`
-  ADD CONSTRAINT `chk_correo_electronico`
+  ADD CONSTRAINT `chk_correo_electronico3`
   CHECK (`mail_destinatario` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');
  
 ALTER TABLE `empresa_cliente`
-  ADD CONSTRAINT `chk_correo_electronico`
+  ADD CONSTRAINT `chk_correo_electronico4`
   CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');
 
 ALTER TABLE `lote`
@@ -256,9 +242,9 @@ ALTER TABLE `lote`
   CHECK (`fragil` IN ('Si', 'No'));
 
 ALTER TABLE `paquete`
-  ADD CONSTRAINT `chk_valores_permitidos_tipo`
+  ADD CONSTRAINT `chk_valores_permitidos_tipo2`
   CHECK (`tipo` IN (NULL, 'Vidrio', 'Líquido', 'Inflamable')),
-  ADD CONSTRAINT `chk_valores_permitidos_fragil`
+  ADD CONSTRAINT `chk_valores_permitidos_fragil2`
   CHECK (`fragil` IN ('Si', 'No'));
 
 ALTER TABLE `paquete`
@@ -448,4 +434,3 @@ BEGIN
 END;
 //
 DELIMITER ;
-

@@ -159,18 +159,6 @@ VALUES
 
 COMMIT;
 
--- Ingreso de tuplas en tabla 'ruta'
-
-START TRANSACTION;
-
-INSERT INTO `ruta` (`nom_ruta`)
-VALUES
-('Ruta 8'),
-('Ruta 12'),
-('Ruta 66'),
-('Ruta 9'),
-('Ruta Interbalnearia');
-
 COMMIT;
 
 -- Ingreso de tuplas en tabla 'login'
