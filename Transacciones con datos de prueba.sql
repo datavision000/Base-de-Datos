@@ -206,13 +206,13 @@ VALUES
 ('1', '1', '2023-10-02', '15:31:42', '2023-10-03', '00:31:42'),
 ('2', '2', '2023-10-02', '15:31:42', '2023-10-03', '00:31:42');
 
-INSERT INTO `trayecto` (`distancia_recorrida`)
+INSERT INTO `trayecto` (`destino`, `destinos_intermedios`, `distancia_recorrida`, `duracion_total`)
 VALUES
-('12000'),
-('13500'),
-('10000'),
-('9500'),
-('12500');
+('Tacuarembó', 'Canelones', 13000, 400),
+('Artigas', NULL, 25000, 1000),
+('Estadio Centenario', 'Thiebaut 1869', 6, 25),
+('Paysandú', 'Estadio Centenario', 18000, 700),
+('Felipe Sanguinetti 1884', 'Thiebaut 1869, Laureles 101', 13000, 400);
 
 INSERT INTO `llega` (`id_trayecto`, `id_plataforma`)
 VALUES

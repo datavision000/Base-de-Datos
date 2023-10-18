@@ -247,6 +247,11 @@ ALTER TABLE `paquete`
   ADD CONSTRAINT `chk_valores_permitidos_fragil2`
   CHECK (`fragil` IN ('Si', 'No'));
 
+ALTER TABLE `login`
+  ADD CONSTRAINT `chk_valores_permitidos_tipo_usu`
+  CHECK (`tipo_usu` IN ('admin', 'almacenero', 'camionero', 'empresa'));
+
+
 ALTER TABLE `paquete`
   ADD CONSTRAINT `chk_paquete_positivo_peso`
   CHECK (`peso` >= 0);
@@ -266,6 +271,8 @@ ALTER TABLE `lote`
 ALTER TABLE `lote`
   ADD CONSTRAINT `chk_lote_cant_paquetes`
   CHECK (`cant_paquetes` >= 0);
+
+
 
 -- Creación de triggers
 
