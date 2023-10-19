@@ -41,8 +41,9 @@ CREATE TABLE `camionero` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `empresa_cliente` (
-  `rut` bigint NOT NULL PRIMARY KEY,
-  `nombre_de_empresa` varchar(45) NOT NULL,
+  `id_empresa_cliente` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `rut` bigint NOT NULL,
+  `nombre_de_empresa` varchar(50) NOT NULL,
   `mail` varchar(45) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -72,14 +73,13 @@ CREATE TABLE `paquete` (
   `detalles` varchar(150) DEFAULT NULL,
   `mail_destinatario` varchar(45) NOT NULL,
   `estado` varchar(35) DEFAULT 'En almacén cliente',
-  `id_destino` int DEFAULT NULL
+  `id_destino` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `destino_paquete` (
   `id_destino` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `departamento_destino` varchar(30) NOT NULL,
-  `ciudad_destino` varchar(30) NOT NULL,
-  UNIQUE (`departamento_destino`, `ciudad_destino`)
+  UNIQUE (`departamento_destino`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `trayecto` (
@@ -104,12 +104,12 @@ CREATE TABLE `login` (
 
 CREATE TABLE `tiene` (
 	`id_almacen_cliente` int PRIMARY KEY NOT NULL,
-    `rut` bigint NOT NULL
+  `id_empresa_cliente` int NOT NULL
 );
 
 CREATE TABLE `almacena` (
 	`id_paquete` int PRIMARY KEY NOT NULL,
-    `id_almacen_cliente` int NOT NULL
+  `id_almacen_cliente` int NOT NULL
 );
 
 CREATE TABLE `forma` (
@@ -167,7 +167,7 @@ CREATE TABLE `sale` (
 
 ALTER TABLE `tiene`
     ADD CONSTRAINT `fk_id_almacen_cliente` FOREIGN KEY (id_almacen_cliente) REFERENCES almacen_cliente(id_almacen_cliente) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    ADD CONSTRAINT `fk_rut` FOREIGN KEY (rut) REFERENCES empresa_cliente(rut) ON DELETE NO ACTION ON UPDATE NO ACTION;
+    ADD CONSTRAINT `fk_id_empresa_cliente` FOREIGN KEY (id_empresa_cliente) REFERENCES empresa_cliente(id_empresa_cliente) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `almacena`
     ADD CONSTRAINT `fk_id_paquete` FOREIGN KEY (id_paquete) REFERENCES paquete(id_paquete) ON DELETE NO ACTION ON UPDATE NO ACTION,
