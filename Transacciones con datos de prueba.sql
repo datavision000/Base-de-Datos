@@ -50,7 +50,7 @@ COMMIT;
 
 START TRANSACTION;
 
-INSERT INTO `camion` (`matricula`, `volumen_disponible`, `peso_soportado`)
+INSERT INTO `vehiculo` (`matricula`, `volumen_disponible`, `peso_soportado`)
 VALUES
 ("STP-3444", 150, 18000),
 ("STP-6934", 150, 16000),
@@ -58,7 +58,7 @@ VALUES
 ("STP-6500", 180, 20000),
 ("STM-7765", 110, 80000);
 
-INSERT INTO `camion` (`matricula`, `volumen_disponible`, `peso_soportado`, `estado`)
+INSERT INTO `vehiculo` (`matricula`, `volumen_disponible`, `peso_soportado`, `estado`)
 VALUES
 ("STM-5743", 1234, 1234, "Fuera de servicio"),
 ("STM-1234", 225, 373, "Fuera de servicio"),
@@ -66,6 +66,23 @@ VALUES
 ("STM-6663", 54, 5959, "Fuera de servicio"),
 ("STP-2312", 8448, 1234, "Fuera de servicio"),
 ("STM-2612", 1234, 353, "Fuera de servicio");
+
+INSERT INTO `camion` (`id_camion`)
+VALUES
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7);
+
+INSERT INTO `camioneta` (`id_camioneta`)
+VALUES
+(8),
+(9),
+(10),
+(11);
 
 COMMIT;
 
@@ -201,10 +218,10 @@ VALUES
 
 INSERT INTO `transporta` (`id_lote`, `id_camion`)
 VALUES
-('3', '3'),
-('5', '3'),
-('6', '9'),
-('9', '4');
+('3', '1'),
+('5', '1'),
+('6', '2'),
+('9', '3');
 
 INSERT INTO `lleva` (`id_lote`, `id_plataforma`, `fecha_llegada`)
 VALUES
@@ -213,7 +230,7 @@ VALUES
 ('5', '5', NULL);
 
 
-INSERT INTO `maneja` (`id_camion`, `id_camionero`, `fecha_inicio_manejo`, `hora_inicio_manejo`, `fecha_fin_manejo`, `hora_fin_manejo`)
+INSERT INTO `maneja` (`id_vehiculo`, `id_camionero`, `fecha_inicio_manejo`, `hora_inicio_manejo`, `fecha_fin_manejo`, `hora_fin_manejo`)
 VALUES
 ('1', '1', '2023-10-02', '15:31:42', '2023-10-03', '00:31:42'),
 ('2', '2', '2023-10-02', '15:31:42', '2023-10-03', '00:31:42');

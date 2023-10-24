@@ -23,13 +23,27 @@ CREATE TABLE `plataforma` (
   `telefono` varchar(20) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `camion` (
-  `id_camion` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE `vehiculo` (
+  `id_vehiculo` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `matricula` varchar(8) NOT NULL UNIQUE,
   `volumen_disponible` int NOT NULL,
   `peso_soportado` int NOT NULL,
   `estado` varchar(20) DEFAULT 'Disponible' NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `camion` (
+  `id_camion` int NOT NULL PRIMARY KEY
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `camioneta` (
+  `id_camioneta` int NOT NULL PRIMARY KEY
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `camion`
+    ADD CONSTRAINT `fk_id_camion` FOREIGN KEY (id_camion) REFERENCES vehiculo(id_vehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  
+ALTER TABLE `camioneta`
+    ADD CONSTRAINT `fk_id_camioneta` FOREIGN KEY (id_camioneta) REFERENCES vehiculo(id_vehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 CREATE TABLE `camionero` (
   `id_camionero` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -42,7 +56,7 @@ CREATE TABLE `camionero` (
 
 CREATE TABLE `empresa_cliente` (
   `id_empresa_cliente` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `rut` bigint NOT NULL,
+  `rut` bigint(12) NOT NULL,
   `nombre_de_empresa` varchar(50) NOT NULL,
   `mail` varchar(45) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -57,9 +71,7 @@ CREATE TABLE `lote` (
   `fragil` varchar(2) NOT NULL,
   `detalles` varchar(150) DEFAULT NULL,
   `fecha_ideal_traslado` date DEFAULT NULL,
-  `hora_ideal_traslado` time DEFAULT NULL,
-  `fecha_recibido` date DEFAULT NULL,
-  `hora_recibido` time DEFAULT NULL
+  `hora_ideal_traslado` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `paquete` (
@@ -73,7 +85,9 @@ CREATE TABLE `paquete` (
   `detalles` varchar(150) DEFAULT NULL,
   `mail_destinatario` varchar(45) NOT NULL,
   `estado` varchar(35) DEFAULT 'En almacén cliente',
-  `id_destino` int NOT NULL
+  `id_destino` int NOT NULL,
+  `fecha_recibido` date DEFAULT NULL,
+  `hora_recibido` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `destino_paquete` (
@@ -123,13 +137,13 @@ CREATE TABLE `almacena1` (
 );
 
 CREATE TABLE `maneja` (
-	`id_camion` int NOT NULL,
+	`id_vehiculo` int NOT NULL,
     `id_camionero` int NOT NULL,
    `fecha_inicio_manejo` DATE NOT NULL,
     `hora_inicio_manejo` TIME NOT NULL,
     `fecha_fin_manejo` DATE NOT NULL,
     `hora_fin_manejo` TIME NOT NULL,
-    PRIMARY KEY (id_camion, id_camionero)
+    PRIMARY KEY (id_vehiculo, id_camionero)
 );
 
 CREATE TABLE `transporta` (
@@ -157,7 +171,7 @@ CREATE TABLE `lleva` (
 );
 
 CREATE TABLE `sale` (
-	`id_camion` int PRIMARY KEY NOT NULL,
+	`id_vehiculo` int PRIMARY KEY NOT NULL,
   `id_almacen_central` int NOT NULL,
   `fecha_salida` date DEFAULT NULL,
   `hora_salida` time DEFAULT NULL
@@ -182,7 +196,7 @@ ALTER TABLE `almacena1`
     ADD CONSTRAINT `fk_id_almacen_central` FOREIGN KEY (id_almacen_central) REFERENCES almacen_central(id_almacen_central) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `maneja`
-    ADD CONSTRAINT `fk_id_camion` FOREIGN KEY (id_camion) REFERENCES camion(id_camion) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    ADD CONSTRAINT `fk_id_vehiculo` FOREIGN KEY (id_vehiculo) REFERENCES vehiculo(id_vehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_id_camionero` FOREIGN KEY (id_camionero) REFERENCES camionero(id_camionero) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `transporta`
@@ -202,7 +216,7 @@ ALTER TABLE `lleva`
     ADD CONSTRAINT `fk_id_plataforma` FOREIGN KEY (id_plataforma) REFERENCES plataforma(id_plataforma) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `sale`
-    ADD CONSTRAINT `fk_id_camion4` FOREIGN KEY (id_camion) REFERENCES camion(id_camion) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    ADD CONSTRAINT `fk_id_vehiculo2` FOREIGN KEY (id_vehiculo) REFERENCES vehiculo(id_vehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_almacen_central2` FOREIGN KEY (id_almacen_central) REFERENCES almacen_central(id_almacen_central) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `paquete`
@@ -215,7 +229,7 @@ ALTER TABLE `trayecto_departamentos`
 
 -- Constraints de tipo Check
 
-ALTER TABLE `camion`
+ALTER TABLE `vehiculo`
   ADD CONSTRAINT `chk_matricula_formato`
   CHECK (`matricula` REGEXP '^[A-S]T[MP]-[0-9][0-9][0-9][0-9]$');
 
@@ -276,6 +290,7 @@ ALTER TABLE `lote`
 
 -- Creación de triggers
 
+/*
 DELIMITER //
 CREATE TRIGGER `tr_actualizar_estado_lote`
 BEFORE UPDATE
@@ -289,6 +304,8 @@ BEGIN
 END;
 //
 DELIMITER ;
+
+*/
 
 /*
 CREATE TRIGGER tr_actualizar_paquetes
@@ -438,6 +455,42 @@ BEGIN
     WHERE id_lote = OLD.id_lote
   )
   WHERE lote.id_lote = OLD.id_lote;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER evita_duplicados_camion
+BEFORE INSERT ON camion
+FOR EACH ROW
+BEGIN
+    DECLARE vehiculo_existente INT;
+  
+    SELECT COUNT(*) INTO vehiculo_existente
+    FROM camioneta
+    WHERE id_camioneta = NEW.id_camion;
+
+    IF vehiculo_existente > 0 THEN
+        SIGNAL SQLSTATE '45000';
+    END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER evita_duplicados_camioneta
+BEFORE INSERT ON camioneta
+FOR EACH ROW
+BEGIN
+    DECLARE vehiculo_existente INT;
+    
+    SELECT COUNT(*) INTO vehiculo_existente
+    FROM camion
+    WHERE id_camion = NEW.id_camioneta;
+
+    IF vehiculo_existente > 0 THEN
+        SIGNAL SQLSTATE '45000';
+    END IF;
 END;
 //
 DELIMITER ;
