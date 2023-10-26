@@ -106,7 +106,7 @@ START TRANSACTION;
 
 INSERT INTO `empresa_cliente` (`rut`, `nombre_de_empresa`, `mail`)
 VALUES
-("184937392027", "Crecom", "crecom23@gmail.com"),
+("184937392027", "CRECOM", "crecom23@gmail.com"),
 ("105839405738", "Top Tecno", "topTecno@gmail.com"),
 ("195849271845", "Adidas", "adidas@gmail.com"),
 ("184930281744", "Nike", "nike00@gmail.com"),
@@ -279,5 +279,15 @@ VALUES
 (5, 8),
 (5, 9),
 (5, 10);
+
+COMMIT;
+
+-- Ingreso de tuplas en tabla 'se_le_asigna'
+
+INSERT INTO `se_le_asigna` (`id_camion`, `id_trayecto`, `fecha_asignacion`, `hora_asig_inicio`, `hora_asig_fin`)
+VALUES
+(1, 1, '2023-05-02', '08:00:00', '14:00:00'),
+(2, 2, '2023-05-22', '08:00:00', '14:00:00'),
+(3, 2, '2023-05-12', '08:00:00', '14:00:00');
 
 COMMIT;

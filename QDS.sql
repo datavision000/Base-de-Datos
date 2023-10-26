@@ -39,12 +39,6 @@ CREATE TABLE `camioneta` (
   `id_camioneta` int NOT NULL PRIMARY KEY
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-ALTER TABLE `camion`
-    ADD CONSTRAINT `fk_id_camion` FOREIGN KEY (id_camion) REFERENCES vehiculo(id_vehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION;
-  
-ALTER TABLE `camioneta`
-    ADD CONSTRAINT `fk_id_camioneta` FOREIGN KEY (id_camioneta) REFERENCES vehiculo(id_vehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
 CREATE TABLE `camionero` (
   `id_camionero` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `cedula` varchar(8) UNIQUE NOT NULL,
@@ -128,7 +122,7 @@ CREATE TABLE `almacena` (
 
 CREATE TABLE `forma` (
 	`id_paquete` int PRIMARY KEY NOT NULL,
-    `id_lote` int NOT NULL
+  `id_lote` int NOT NULL
 );
 
 CREATE TABLE `almacena1` (
@@ -153,8 +147,11 @@ CREATE TABLE `transporta` (
 
 CREATE TABLE `se_le_asigna` (
 	`id_camion` int NOT NULL,
-    `id_trayecto` int NOT NULL,
-    PRIMARY KEY (id_camion, id_trayecto)
+  `id_trayecto` int NOT NULL,
+  `fecha_asignacion` DATE NOT NULL,
+  `hora_asig_inicio` TIME NOT NULL,
+  `hora_asig_fin` TIME NOT NULL, 
+  PRIMARY KEY (id_camion, id_trayecto)
 );
 
 CREATE TABLE `llega` (
@@ -177,7 +174,23 @@ CREATE TABLE `sale` (
   `hora_salida` time DEFAULT NULL
 );
 
+CREATE TABLE `recoge` (
+	`id_camioneta` int NOT NULL,
+  `id_almacen_cliente` int NOT NULL,
+  `fecha_recogida_ideal` date NOT NULL,
+  `hora_recogida_ideal` time NOT NULL,
+  `fecha_recogida` date DEFAULT NULL,
+  `hora_recogida` time DEFAULT NULL,
+  PRIMARY KEY (id_camioneta, id_almacen_cliente, fecha_recogida_ideal, hora_recogida_ideal)
+);
+
 -- Constraints de tipo Foreign Key
+
+ALTER TABLE `camion`
+    ADD CONSTRAINT `fk_id_camion` FOREIGN KEY (id_camion) REFERENCES vehiculo(id_vehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  
+ALTER TABLE `camioneta`
+    ADD CONSTRAINT `fk_id_camioneta` FOREIGN KEY (id_camioneta) REFERENCES vehiculo(id_vehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `tiene`
     ADD CONSTRAINT `fk_id_almacen_cliente` FOREIGN KEY (id_almacen_cliente) REFERENCES almacen_cliente(id_almacen_cliente) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -218,6 +231,10 @@ ALTER TABLE `lleva`
 ALTER TABLE `sale`
     ADD CONSTRAINT `fk_id_vehiculo2` FOREIGN KEY (id_vehiculo) REFERENCES vehiculo(id_vehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_almacen_central2` FOREIGN KEY (id_almacen_central) REFERENCES almacen_central(id_almacen_central) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+ALTER TABLE `recoge`
+  ADD CONSTRAINT `fk_id_camioneta2` FOREIGN KEY (id_camioneta) REFERENCES camioneta(id_camioneta) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_almacen_cliente3` FOREIGN KEY (id_almacen_cliente) REFERENCES almacen_cliente(id_almacen_cliente) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `paquete`
   ADD KEY `id_destino` (`id_destino`),
