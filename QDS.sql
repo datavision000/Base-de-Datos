@@ -145,15 +145,6 @@ CREATE TABLE `transporta` (
   `id_camion` int NOT NULL
 );
 
-CREATE TABLE `se_le_asigna` (
-	`id_camion` int NOT NULL,
-  `id_trayecto` int NOT NULL,
-  `fecha_asignacion` DATE NOT NULL,
-  `hora_asig_inicio` TIME NOT NULL,
-  `hora_asig_fin` TIME NOT NULL, 
-  PRIMARY KEY (id_camion, id_trayecto)
-);
-
 CREATE TABLE `llega` (
 	`id_trayecto` int NOT NULL,
   `id_plataforma` int NOT NULL,
@@ -215,10 +206,6 @@ ALTER TABLE `maneja`
 ALTER TABLE `transporta`
     ADD CONSTRAINT `fk_id_lote3` FOREIGN KEY (id_lote) REFERENCES lote(id_lote) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_id_camion2` FOREIGN KEY (id_camion) REFERENCES camion(id_camion) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-ALTER TABLE `se_le_asigna`
-    ADD CONSTRAINT `fk_id_camion3` FOREIGN KEY (id_camion) REFERENCES camion(id_camion) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    ADD CONSTRAINT `fk_id_trayecto` FOREIGN KEY (id_trayecto) REFERENCES trayecto(id_trayecto) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `llega`
     ADD CONSTRAINT `fk_id_trayecto3` FOREIGN KEY (id_trayecto) REFERENCES trayecto(id_trayecto) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -303,11 +290,46 @@ ALTER TABLE `lote`
   ADD CONSTRAINT `chk_lote_cant_paquetes`
   CHECK (`cant_paquetes` >= 0);
 
+ALTER TABLE `paquete`
+  ADD CONSTRAINT `chk_valores_permitidos_estado_paquete`
+  CHECK (`estado` IN ('En almacén cliente', 'En camioneta (central)', 'En almacén central',
+  'En almacén central (lote)', 'En almacén central (camión)', 'En camión (plataforma)', 'Entregado'));
+
+ALTER TABLE `lote`
+  ADD CONSTRAINT `chk_valores_permitidos_estado_lote`
+  CHECK (`estado` IN ('En almacén central', 'En almacén central (camión)', 'En camión (plataforma)', 'Entregado'));
 
 
 -- Creación de triggers
 
+DELIMITER //
+CREATE TRIGGER `tr_actualizar_lote`
+AFTER INSERT
+ON `transporta`
+FOR EACH ROW
+BEGIN
+  UPDATE `lote`
+  SET estado = 'En almacén central (camión)'
+  WHERE id_lote = NEW.id_lote;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER `tr_actualizar_lote2`
+AFTER DELETE
+ON `transporta`
+FOR EACH ROW
+BEGIN
+  UPDATE `lote`
+  SET estado = 'En almacén central'
+  WHERE id_lote = OLD.id_lote;
+END;
+//
+DELIMITER ;
+
 /*
+
 DELIMITER //
 CREATE TRIGGER `tr_actualizar_estado_lote`
 BEFORE UPDATE
@@ -323,6 +345,7 @@ END;
 DELIMITER ;
 
 */
+
 
 /*
 CREATE TRIGGER tr_actualizar_paquetes
@@ -477,7 +500,7 @@ END;
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER evita_duplicados_camion
+CREATE TRIGGER `evita_duplicados_camion`
 BEFORE INSERT ON camion
 FOR EACH ROW
 BEGIN
@@ -495,7 +518,7 @@ END;
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER evita_duplicados_camioneta
+CREATE TRIGGER `evita_duplicados_camioneta`
 BEFORE INSERT ON camioneta
 FOR EACH ROW
 BEGIN

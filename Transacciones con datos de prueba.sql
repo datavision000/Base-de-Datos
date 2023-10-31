@@ -281,13 +281,3 @@ VALUES
 (5, 10);
 
 COMMIT;
-
--- Ingreso de tuplas en tabla 'se_le_asigna'
-
-INSERT INTO `se_le_asigna` (`id_camion`, `id_trayecto`, `fecha_asignacion`, `hora_asig_inicio`, `hora_asig_fin`)
-VALUES
-(1, 1, '2023-05-02', '08:00:00', '14:00:00'),
-(2, 2, '2023-05-22', '08:00:00', '14:00:00'),
-(3, 2, '2023-05-12', '08:00:00', '14:00:00');
-
-COMMIT;
