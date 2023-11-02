@@ -19,7 +19,7 @@ CREATE TABLE `plataforma` (
   `id_plataforma` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `direccion` varchar(65) NOT NULL,
   `volumen_maximo` int NOT NULL,
-  `departamento` varchar(35) NOT NULL,
+  `departamento` int NOT NULL,
   `telefono` varchar(20) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -226,6 +226,10 @@ ALTER TABLE `recoge`
 ALTER TABLE `paquete`
   ADD KEY `id_destino` (`id_destino`),
   ADD CONSTRAINT `fk_destino_paquete` FOREIGN KEY (`id_destino`) REFERENCES `destino_paquete` (`id_destino`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+ALTER TABLE `plataforma`
+  ADD KEY `departamento` (`departamento`),
+  ADD CONSTRAINT `fk_departamento_plataforma` FOREIGN KEY (`departamento`) REFERENCES `destino_paquete` (`id_destino`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `trayecto_departamentos`
   ADD KEY `id_trayecto` (`id_trayecto`),

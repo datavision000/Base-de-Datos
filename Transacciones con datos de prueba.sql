@@ -1,3 +1,31 @@
+-- Ingreso de tuplas en tabla 'destino_paquete'
+
+START TRANSACTION;
+
+INSERT INTO `destino_paquete` (`departamento_destino`)
+VALUES
+('Montevideo'),
+('Maldonado'),
+('Canelones'),
+('Cerro Largo'),
+('Treinta y Tres'),
+('Flores'),
+('Florida'),
+('Durazno'),
+('Tacuarembó'),
+('Río Negro'),
+('Rocha'),
+('Colonia'),
+('Paysandú'),
+('Artigas'),
+('Rivera'),
+('Salto'),
+('Lavalleja'),
+('San José'),
+('Soriano');
+
+COMMIT;
+
 -- Ingreso de tuplas en tabla 'almacen_central'
 
 START TRANSACTION;
@@ -32,16 +60,16 @@ START TRANSACTION;
 
 INSERT INTO `plataforma` (`direccion`, `volumen_maximo`, `departamento`, `telefono`)
 VALUES
-("Humberto I 3928", 120000, "Montevideo", "095837122"),
-("Avenida Del Mar 1839", 90000, "Maldonado", "092184932"),
-("Joaquín Artigas 1456", 110000, "Treinta y Tres", "094349548"),
-("Milton Rusiñol 567", 100000, "Flores", "092183926"),
-("Neyra 1204", 100000, "Durazno", "097888361"),
-("Porongos 213", 100000, "Montevideo", "097857214"),
-("Leguizamón 1872", 100000, "Montevideo", "093349851"),
-("José Gómez 222", 100000, "Montevideo", "094829183"),
-("Vuritos 1432", 100000, "Montevideo", "098493821"),
-("Avenida Brasil 1832", 100000, "Montevideo", "091238495");
+("Humberto I 3928", 120000, 1, "095837122"),
+("Avenida Del Mar 1839", 90000, 8, "092184932"),
+("Joaquín Artigas 1456", 110000, 3, "094349548"),
+("Milton Rusiñol 567", 100000, 2, "092183926"),
+("Neyra 1204", 100000, 1, "097888361"),
+("Porongos 213", 100000, 1, "097857214"),
+("Leguizamón 1872", 100000, 1, "093349851"),
+("José Gómez 222", 100000, 4, "094829183"),
+("Vuritos 1432", 100000, 6, "098493821"),
+("Avenida Brasil 1832", 100000, 1, "091238495");
 
 
 COMMIT;
@@ -134,34 +162,6 @@ VALUES
 ('No', '2023-12-24', '20:00:00'),
 ('No', '2023-11-11', '20:00:00');
 
-
-COMMIT;
-
--- Ingreso de tuplas en tabla 'destino_paquete'
-
-START TRANSACTION;
-
-INSERT INTO `destino_paquete` (`departamento_destino`)
-VALUES
-('Montevideo'),
-('Maldonado'),
-('Canelones'),
-('Cerro Largo'),
-('Treinta y Tres'),
-('Flores'),
-('Florida'),
-('Durazno'),
-('Tacuarembó'),
-('Río Negro'),
-('Rocha'),
-('Colonia'),
-('Paysandú'),
-('Artigas'),
-('Rivera'),
-('Salto'),
-('Lavalleja'),
-('San José'),
-('Soriano');
 
 COMMIT;
 
