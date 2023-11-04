@@ -26,12 +26,13 @@ FROM vehiculo
 INNER JOIN camion ON camion.id_camion = vehiculo.id_vehiculo;
 
 /*CONSULTA 4*/
-SELECT camion.id_camion, vehiculo.matricula, vehiculo.volumen_disponible, vehiculo.peso_soportado, vehiculo.estado
+SELECT camion.id_camion, vehiculo.matricula, vehiculo.volumen_disponible, vehiculo.peso_soportado, vehiculo.estado, lleva.id_plataforma, plataforma.direccion
 FROM lleva
 INNER JOIN transporta ON lleva.id_lote = transporta.id_lote
 INNER JOIN camion ON transporta.id_camion = camion.id_camion
 INNER JOIN vehiculo ON vehiculo.id_vehiculo = camion.id_camion
-WHERE MONTH(fecha_llegada)=6 AND id_plataforma=8;
+INNER JOIN plataforma ON lleva.id_plataforma = plataforma.id_plataforma
+WHERE MONTH(fecha_llegada)=6 AND lleva.id_plataforma=8;
 
 /*CONSULTA 5*/
 SELECT paquete.id_paquete, paquete.direccion, destino_paquete.departamento_destino, forma.id_lote,
@@ -71,6 +72,8 @@ FROM vehiculo
 WHERE id_vehiculo not in(select id_vehiculo from maneja);
 
 /*CONSULTA 10*/
-SELECT plataforma.id_plataforma, plataforma.departamento, plataforma.direccion, plataforma.volumen_maximo, plataforma.telefono
-FROM plataforma INNER JOIN llega ON plataforma.id_plataforma = llega.id_plataforma
+SELECT plataforma.id_plataforma, destino_paquete.departamento_destino, destino_paquete.ciudad_destino, plataforma.direccion, plataforma.volumen_maximo, plataforma.telefono
+FROM plataforma
+INNER JOIN llega ON plataforma.id_plataforma = llega.id_plataforma
+INNER JOIN destino_paquete ON plataforma.ubicacion = destino_paquete.id_destino
 WHERE id_trayecto=1;

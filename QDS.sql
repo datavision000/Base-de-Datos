@@ -19,7 +19,7 @@ CREATE TABLE `plataforma` (
   `id_plataforma` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `direccion` varchar(65) NOT NULL,
   `volumen_maximo` int NOT NULL,
-  `departamento` int NOT NULL,
+  `ubicacion` int NOT NULL,
   `telefono` varchar(20) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -85,9 +85,10 @@ CREATE TABLE `paquete` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `destino_paquete` (
-  `id_destino` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `id_destino` int NOT NULL AUTO_INCREMENT,
   `departamento_destino` varchar(30) NOT NULL,
-  UNIQUE (`departamento_destino`)
+  `ciudad_destino` varchar(35) NOT NULL,
+  PRIMARY KEY (`id_destino`, `departamento_destino`, `ciudad_destino`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `trayecto` (
@@ -158,13 +159,6 @@ CREATE TABLE `lleva` (
   `hora_llegada` time DEFAULT NULL
 );
 
-CREATE TABLE `sale` (
-	`id_vehiculo` int PRIMARY KEY NOT NULL,
-  `id_almacen_central` int NOT NULL,
-  `fecha_salida` date DEFAULT NULL,
-  `hora_salida` time DEFAULT NULL
-);
-
 CREATE TABLE `recoge` (
 	`id_camioneta` int NOT NULL,
   `id_almacen_cliente` int NOT NULL,
@@ -172,7 +166,10 @@ CREATE TABLE `recoge` (
   `hora_recogida_ideal` time NOT NULL,
   `fecha_recogida` date DEFAULT NULL,
   `hora_recogida` time DEFAULT NULL,
-  PRIMARY KEY (id_camioneta, id_almacen_cliente, fecha_recogida_ideal, hora_recogida_ideal)
+  `fecha_salida` date NOT NULL,
+  `hora_salida` time NOT NULL,
+  `almacen_central_salida` int NOT NULL,
+  PRIMARY KEY (id_camioneta, id_almacen_cliente, fecha_recogida_ideal, hora_recogida_ideal, fecha_salida, hora_salida, almacen_central_salida)
 );
 
 -- Constraints de tipo Foreign Key
@@ -215,21 +212,17 @@ ALTER TABLE `lleva`
     ADD CONSTRAINT `fk_id_lote4` FOREIGN KEY (id_lote) REFERENCES transporta(id_lote) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_id_plataforma` FOREIGN KEY (id_plataforma) REFERENCES plataforma(id_plataforma) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-ALTER TABLE `sale`
-    ADD CONSTRAINT `fk_id_vehiculo2` FOREIGN KEY (id_vehiculo) REFERENCES vehiculo(id_vehiculo) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    ADD CONSTRAINT `fk_almacen_central2` FOREIGN KEY (id_almacen_central) REFERENCES almacen_central(id_almacen_central) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
 ALTER TABLE `recoge`
   ADD CONSTRAINT `fk_id_camioneta2` FOREIGN KEY (id_camioneta) REFERENCES camioneta(id_camioneta) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_almacen_cliente3` FOREIGN KEY (id_almacen_cliente) REFERENCES almacen_cliente(id_almacen_cliente) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_almacen_cliente3` FOREIGN KEY (id_almacen_cliente) REFERENCES almacen_cliente(id_almacen_cliente) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_id_almacen_central_salida` FOREIGN KEY (almacen_central_salida) REFERENCES almacen_central(id_almacen_central) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `paquete`
   ADD KEY `id_destino` (`id_destino`),
   ADD CONSTRAINT `fk_destino_paquete` FOREIGN KEY (`id_destino`) REFERENCES `destino_paquete` (`id_destino`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `plataforma`
-  ADD KEY `departamento` (`departamento`),
-  ADD CONSTRAINT `fk_departamento_plataforma` FOREIGN KEY (`departamento`) REFERENCES `destino_paquete` (`id_destino`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_ubicacion_plataforma` FOREIGN KEY (`ubicacion`) REFERENCES `destino_paquete` (`id_destino`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `trayecto_departamentos`
   ADD KEY `id_trayecto` (`id_trayecto`),

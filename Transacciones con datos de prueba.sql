@@ -2,27 +2,13 @@
 
 START TRANSACTION;
 
-INSERT INTO `destino_paquete` (`departamento_destino`)
+INSERT INTO `destino_paquete` (`departamento_destino`, `ciudad_destino`)
 VALUES
-('Montevideo'),
-('Maldonado'),
-('Canelones'),
-('Cerro Largo'),
-('Treinta y Tres'),
-('Flores'),
-('Florida'),
-('Durazno'),
-('Tacuarembó'),
-('Río Negro'),
-('Rocha'),
-('Colonia'),
-('Paysandú'),
-('Artigas'),
-('Rivera'),
-('Salto'),
-('Lavalleja'),
-('San José'),
-('Soriano');
+('Montevideo', 'Montevideo'),
+('Maldonado', 'Punta del Este'),
+('Canelones', 'Atlántida'),
+('Cerro Largo', 'Melo'),
+('Maldonado', 'Piriápolis');
 
 COMMIT;
 
@@ -58,17 +44,17 @@ COMMIT;
 
 START TRANSACTION;
 
-INSERT INTO `plataforma` (`direccion`, `volumen_maximo`, `departamento`, `telefono`)
+INSERT INTO `plataforma` (`direccion`, `volumen_maximo`, `ubicacion`, `telefono`)
 VALUES
 ("Humberto I 3928", 120000, 1, "095837122"),
-("Avenida Del Mar 1839", 90000, 8, "092184932"),
+("Avenida Del Mar 1839", 90000, 1, "092184932"),
 ("Joaquín Artigas 1456", 110000, 3, "094349548"),
-("Milton Rusiñol 567", 100000, 2, "092183926"),
+("Milton Rusiñol 567", 100000, 3, "092183926"),
 ("Neyra 1204", 100000, 1, "097888361"),
 ("Porongos 213", 100000, 1, "097857214"),
 ("Leguizamón 1872", 100000, 1, "093349851"),
-("José Gómez 222", 100000, 4, "094829183"),
-("Vuritos 1432", 100000, 6, "098493821"),
+("José Gómez 222", 100000, 2, "094829183"),
+("Vuritos 1432", 100000, 4, "098493821"),
 ("Avenida Brasil 1832", 100000, 1, "091238495");
 
 
@@ -184,8 +170,8 @@ VALUES
 ("HLFK33456LAK", '8020', '500', 'Estivao 222', 'No', 'ruti@gmail.com', 'En almacén central (Lote)', 1);
 INSERT INTO `paquete` (`codigo_seguimiento`, `volumen`, `peso`, `direccion`, `fragil`, `mail_destinatario`, `id_destino`, `estado`)
 VALUES
-("FLAOPLDJSPOA", '22', '500', 'Laureles 2111', 'No', 'nast@gmail.com', 1, 'En almacén central (Lote)'),
-("FAPO34OJI348", '66', '500', 'Juaripé 2312', 'No', 'fartux@gmail.com', 1, 'En almacén central (Lote)'),
+("FLAOPLDJSPOA", '22', '500', 'Laureles 2111', 'No', 'nast@gmail.com', 4, 'En almacén central (Lote)'),
+("FAPO34OJI348", '66', '500', 'Juaripé 2312', 'No', 'fartux@gmail.com', 4, 'En almacén central (Lote)'),
 ("XMCPAO4IO3J2", '99', '400', 'Calle 3242', 'No', 'lalo2312@gmail.com', 1, 'En almacén central (Lote)');
 
 COMMIT;
