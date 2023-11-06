@@ -50,18 +50,15 @@ CREATE TABLE `camionero` (
 
 CREATE TABLE `empresa_cliente` (
   `id_empresa_cliente` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `rut` bigint(12) NOT NULL,
+  `rut` varchar(12) NOT NULL,
   `nombre_de_empresa` varchar(50) NOT NULL,
   `mail` varchar(45) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `lote` (
   `id_lote` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `cant_paquetes` int DEFAULT '0',
   `tipo` varchar(20) DEFAULT NULL,
   `estado` varchar(35) DEFAULT 'En almacén central',
-  `volumen` int DEFAULT '0',
-  `peso` int DEFAULT '0',
   `fragil` varchar(2) NOT NULL,
   `detalles` varchar(150) DEFAULT NULL,
   `fecha_ideal_traslado` date DEFAULT NULL,
@@ -105,7 +102,8 @@ CREATE TABLE `trayecto_departamentos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `login` (
-  `nom_usu` varchar(30) NOT NULL PRIMARY KEY,
+  `id_usuario` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `nom_usu` varchar(30) NOT NULL UNIQUE,
   `mail` varchar(45) NOT NULL UNIQUE,
   `tipo_usu` varchar(30) NOT NULL,
   `contrasenia` varchar(30) NOT NULL
@@ -172,6 +170,17 @@ CREATE TABLE `recoge` (
   PRIMARY KEY (id_camioneta, id_almacen_cliente, fecha_recogida_ideal, hora_recogida_ideal, fecha_salida, hora_salida, almacen_central_salida)
 );
 
+CREATE TABLE `solicitud` (
+	`id_solicitud` int AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `usuario` varchar(30) NOT NULL,
+  `usuario_destino` varchar(30) NOT NULL,
+  `detalles` varchar(150) NOT NULL,
+  `estado` varchar(10) NOT NULL,
+  `id_almacen_cliente` int NOT NULL,
+  `fecha_recogida_ideal` date NOT NULL,
+  `hora_recogida_ideal` time NOT NULL
+);
+
 -- Constraints de tipo Foreign Key
 
 ALTER TABLE `camion`
@@ -228,6 +237,11 @@ ALTER TABLE `trayecto_departamentos`
   ADD KEY `id_trayecto` (`id_trayecto`),
   ADD CONSTRAINT `fk_trayecto_departamentos` FOREIGN KEY (`id_trayecto`) REFERENCES `trayecto` (`id_trayecto`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
+ALTER TABLE `solicitud`
+    ADD CONSTRAINT `fk_usuario_solicitud` FOREIGN KEY (`usuario`) REFERENCES `login` (`nom_usu`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    ADD CONSTRAINT `fk_usuario_destino_solicitud` FOREIGN KEY (`usuario_destino`) REFERENCES `login` (`nom_usu`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    ADD CONSTRAINT `fk_almacen_cliente_solicitud` FOREIGN KEY (`id_almacen_cliente`) REFERENCES `almacen_cliente` (`id_almacen_cliente`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
 -- Constraints de tipo Check
 
 ALTER TABLE `vehiculo`
@@ -266,6 +280,9 @@ ALTER TABLE `login`
   ADD CONSTRAINT `chk_valores_permitidos_tipo_usu`
   CHECK (`tipo_usu` IN ('admin', 'almacenero', 'camionero', 'empresa'));
 
+ALTER TABLE `solicitud`
+  ADD CONSTRAINT `chk_valores_permitidos_estado_solicitud`
+  CHECK (`estado` IN ('En espera', 'Aceptada', 'Denegada'));
 
 ALTER TABLE `paquete`
   ADD CONSTRAINT `chk_paquete_positivo_peso`
@@ -382,116 +399,6 @@ BEGIN
   UPDATE `paquete`
   SET estado = 'En almacén central'
   WHERE id_paquete = OLD.id_paquete;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER `suma_peso_lote`
-AFTER INSERT
-ON `forma`
-FOR EACH ROW
-BEGIN
-  SET @total_peso := (
-    SELECT SUM(CAST(paquete.peso AS SIGNED))
-    FROM `paquete`
-    WHERE paquete.id_paquete = NEW.id_paquete
-  );
-
-  UPDATE `lote`
-  SET peso = peso + @total_peso
-  WHERE lote.id_lote = NEW.id_lote;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER `resta_peso_lote`
-AFTER DELETE
-ON `forma`
-FOR EACH ROW
-BEGIN
-  SET @total_peso := (
-    SELECT SUM(CAST(paquete.peso AS SIGNED))
-    FROM `paquete`
-    WHERE paquete.id_paquete = OLD.id_paquete
-  );
-
-  UPDATE `lote`
-  SET peso = peso - @total_peso
-  WHERE lote.id_lote = OLD.id_lote;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER `suma_volumen_lote`
-AFTER INSERT
-ON `forma`
-FOR EACH ROW
-BEGIN
-  SET @total_volumen := (
-    SELECT SUM(CAST(paquete.volumen AS SIGNED))
-    FROM `paquete`
-    WHERE paquete.id_paquete = NEW.id_paquete
-  );
-
-  UPDATE `lote`
-  SET volumen = volumen + @total_volumen
-  WHERE lote.id_lote = NEW.id_lote;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER `resta_volumen_lote`
-AFTER DELETE
-ON `forma`
-FOR EACH ROW
-BEGIN
-  SET @total_volumen := (
-    SELECT SUM(CAST(paquete.volumen AS SIGNED))
-    FROM `paquete`
-    WHERE paquete.id_paquete = OLD.id_paquete
-  );
-
-  UPDATE `lote`
-  SET volumen = volumen - @total_volumen
-  WHERE lote.id_lote = OLD.id_lote;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER `cant_paquetes_lote_agregar`
-AFTER INSERT
-ON `forma`
-FOR EACH ROW
-BEGIN
-  UPDATE `lote`
-  SET cant_paquetes = (
-    SELECT COUNT(*)
-    FROM `forma`
-    WHERE id_lote = NEW.id_lote
-  )
-  WHERE lote.id_lote = NEW.id_lote;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER `cant_paquetes_lote_eliminar`
-AFTER DELETE
-ON `forma`
-FOR EACH ROW
-BEGIN
-  UPDATE `lote`
-  SET cant_paquetes = (
-    SELECT COUNT(*)
-    FROM `forma`
-    WHERE id_lote = OLD.id_lote
-  )
-  WHERE lote.id_lote = OLD.id_lote;
 END;
 //
 DELIMITER ;
