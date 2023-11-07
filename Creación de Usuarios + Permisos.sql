@@ -11,7 +11,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON QDS.paquete TO 'almacenes'@'localhost';
 GRANT SELECT, INSERT, UPDATE, DELETE ON QDS.lote TO 'almacenes'@'localhost';
 GRANT SELECT, INSERT, UPDATE, DELETE ON QDS.forma TO 'almacenes'@'localhost';
 GRANT SELECT, INSERT, UPDATE, DELETE ON QDS.transporta TO 'almacenes'@'localhost';
-GRANT SELECT ON QDS.destino_paquete TO 'almacenes'@'localhost';
+GRANT SELECT ON QDS.destino TO 'almacenes'@'localhost';
 GRANT SELECT ON QDS.camion TO 'almacenes'@'localhost';
 GRANT SELECT ON QDS.plataforma TO 'almacenes'@'localhost';
 GRANT SELECT ON QDS.almacen_central TO 'almacenes'@'localhost';

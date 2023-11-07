@@ -1,8 +1,8 @@
--- Ingreso de tuplas en tabla 'destino_paquete'
+-- Ingreso de tuplas en tabla 'destino'
 
 START TRANSACTION;
 
-INSERT INTO `destino_paquete` (`departamento_destino`, `ciudad_destino`)
+INSERT INTO `destino` (`departamento_destino`, `ciudad_destino`)
 VALUES
 ('Montevideo', 'Montevideo'),
 ('Maldonado', 'Punta del Este'),

@@ -4,8 +4,8 @@ paquete.estado, paquete.id_destino
 FROM lleva
 INNER JOIN forma ON lleva.id_lote = forma.id_lote
 INNER JOIN paquete ON forma.id_paquete = paquete.id_paquete
-INNER JOIN destino_paquete ON paquete.id_destino = destino_paquete.id_destino
-WHERE MONTH(lleva.fecha_llegada) = 5 AND YEAR(lleva.fecha_llegada) = 2023 AND destino_paquete.ciudad_destino = "Melo";
+INNER JOIN destino ON paquete.id_destino = destino.id_destino
+WHERE MONTH(lleva.fecha_llegada) = 5 AND YEAR(lleva.fecha_llegada) = 2023 AND destino.ciudad_destino = "Melo";
 
 /*CONSULTA 2*/
 SELECT paquete.id_paquete, paquete.codigo_seguimiento, paquete.direccion, paquete.mail_destinatario, paquete.estado, lleva.id_plataforma, plataforma.direccion, lleva.fecha_llegada, lleva.hora_llegada
@@ -35,10 +35,10 @@ INNER JOIN plataforma ON lleva.id_plataforma = plataforma.id_plataforma
 WHERE MONTH(fecha_llegada)=6 AND lleva.id_plataforma=8;
 
 /*CONSULTA 5*/
-SELECT paquete.id_paquete, paquete.direccion, destino_paquete.departamento_destino, forma.id_lote,
+SELECT paquete.id_paquete, paquete.direccion, destino.departamento_destino, forma.id_lote,
 lleva.id_plataforma, camion.id_camion, vehiculo.matricula
 FROM paquete
-INNER JOIN destino_paquete ON paquete.id_destino = destino_paquete.id_destino
+INNER JOIN destino ON paquete.id_destino = destino.id_destino
 INNER JOIN forma ON paquete.id_paquete = forma.id_paquete
 INNER JOIN transporta ON forma.id_lote = transporta.id_lote
 INNER JOIN lleva ON transporta.id_lote = lleva.id_lote
@@ -72,8 +72,8 @@ FROM vehiculo
 WHERE id_vehiculo not in(select id_vehiculo from maneja);
 
 /*CONSULTA 10*/
-SELECT plataforma.id_plataforma, destino_paquete.departamento_destino, destino_paquete.ciudad_destino, plataforma.direccion, plataforma.volumen_maximo, plataforma.telefono
+SELECT plataforma.id_plataforma, destino.departamento_destino, destino.ciudad_destino, plataforma.direccion, plataforma.volumen_maximo, plataforma.telefono
 FROM plataforma
 INNER JOIN llega ON plataforma.id_plataforma = llega.id_plataforma
-INNER JOIN destino_paquete ON plataforma.ubicacion = destino_paquete.id_destino
+INNER JOIN destino ON plataforma.ubicacion = destino.id_destino
 WHERE id_trayecto=1;

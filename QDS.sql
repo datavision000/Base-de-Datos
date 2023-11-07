@@ -1,6 +1,34 @@
 CREATE DATABASE `QDS`;
 USE `QDS`;
 
+-- Borrado de tablas
+
+DROP TABLE IF EXISTS `almacen_central`;
+DROP TABLE IF EXISTS `almacen_cliente`;
+DROP TABLE IF EXISTS `plataforma`;
+DROP TABLE IF EXISTS `vehiculo`;
+DROP TABLE IF EXISTS `camion`;
+DROP TABLE IF EXISTS `camioneta`;
+DROP TABLE IF EXISTS `camionero`;
+DROP TABLE IF EXISTS `almacena`;
+DROP TABLE IF EXISTS `almacena1`;
+DROP TABLE IF EXISTS `destino`;
+DROP TABLE IF EXISTS `empresa_cliente`;
+DROP TABLE IF EXISTS `forma`;
+DROP TABLE IF EXISTS `llega`;
+DROP TABLE IF EXISTS `lleva`;
+DROP TABLE IF EXISTS `login`;
+DROP TABLE IF EXISTS `lote`;
+DROP TABLE IF EXISTS `maneja`;
+DROP TABLE IF EXISTS `paquete`;
+DROP TABLE IF EXISTS `recoge`;
+DROP TABLE IF EXISTS `solicitud`;
+DROP TABLE IF EXISTS `tiene`;
+DROP TABLE IF EXISTS `transporta`;
+DROP TABLE IF EXISTS `trayecto`;
+DROP TABLE IF EXISTS `trayecto_departamentos`;
+
+
 -- Creacion de las estructuras de las tablas
 
 CREATE TABLE `almacen_central` (
@@ -81,7 +109,7 @@ CREATE TABLE `paquete` (
   `hora_recibido` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `destino_paquete` (
+CREATE TABLE `destino` (
   `id_destino` int NOT NULL AUTO_INCREMENT,
   `departamento_destino` varchar(30) NOT NULL,
   `ciudad_destino` varchar(35) NOT NULL,
@@ -178,7 +206,9 @@ CREATE TABLE `solicitud` (
   `estado` varchar(10) NOT NULL,
   `id_almacen_cliente` int NOT NULL,
   `fecha_recogida_ideal` date NOT NULL,
-  `hora_recogida_ideal` time NOT NULL
+  `hora_recogida_ideal` time NOT NULL,
+  `fecha_solicitud` date NOT NULL,
+  `hora_solicitud` time NOT NULL
 );
 
 -- Constraints de tipo Foreign Key
@@ -228,10 +258,10 @@ ALTER TABLE `recoge`
 
 ALTER TABLE `paquete`
   ADD KEY `id_destino` (`id_destino`),
-  ADD CONSTRAINT `fk_destino_paquete` FOREIGN KEY (`id_destino`) REFERENCES `destino_paquete` (`id_destino`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_destino` FOREIGN KEY (`id_destino`) REFERENCES `destino` (`id_destino`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `plataforma`
-  ADD CONSTRAINT `fk_ubicacion_plataforma` FOREIGN KEY (`ubicacion`) REFERENCES `destino_paquete` (`id_destino`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_ubicacion_plataforma` FOREIGN KEY (`ubicacion`) REFERENCES `destino` (`id_destino`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `trayecto_departamentos`
   ADD KEY `id_trayecto` (`id_trayecto`),
@@ -291,18 +321,6 @@ ALTER TABLE `paquete`
 ALTER TABLE `paquete`
   ADD CONSTRAINT `chk_paquete_positivo_volumen`
   CHECK (`volumen` >= 0);
-
-ALTER TABLE `lote`
-  ADD CONSTRAINT `chk_lote_positivo_peso`
-  CHECK (`peso` >= 0);
-
-ALTER TABLE `lote`
-  ADD CONSTRAINT `chk_lote_positivo_volumen`
-  CHECK (`volumen` >= 0);
-
-ALTER TABLE `lote`
-  ADD CONSTRAINT `chk_lote_cant_paquetes`
-  CHECK (`cant_paquetes` >= 0);
 
 ALTER TABLE `paquete`
   ADD CONSTRAINT `chk_valores_permitidos_estado_paquete`
@@ -438,3 +456,10 @@ BEGIN
 END;
 //
 DELIMITER ;
+
+-- VISTAS
+
+CREATE VIEW mostrar_camiones
+AS
+SELECT * FROM vehiculo
+INNER JOIN camion ON vehiculo.id_vehiculo = camion.id_camion

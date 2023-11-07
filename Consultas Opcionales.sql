@@ -1,8 +1,8 @@
 /*CONSULTA 1*/
-SELECT paquete.id_paquete, destino_paquete.departamento_destino, destino_paquete.ciudad_destino, paquete.estado
+SELECT paquete.id_paquete, destino.departamento_destino, destino.ciudad_destino, paquete.estado
 FROM almacena
 INNER JOIN paquete ON almacena.id_paquete = paquete.id_paquete
-INNER JOIN destino_paquete ON paquete.id_destino = destino_paquete.id_destino
+INNER JOIN destino ON paquete.id_destino = destino.id_destino
 WHERE almacena.id_almacen_cliente = 1;
 
 /*CONSULTA 2*/
@@ -27,11 +27,11 @@ WHERE MONTH(lleva.fecha_llegada) = 8 AND YEAR(lleva.fecha_llegada) = 2023 AND ll
 
 
 /*CONSULTA 8*/
-SELECT plataforma.id_plataforma, plataforma.direccion, destino_paquete.departamento_destino, destino_paquete.ciudad_destino, plataforma.telefono, trayecto.distancia_recorrida, trayecto.duracion_total
+SELECT plataforma.id_plataforma, plataforma.direccion, destino.departamento_destino, destino.ciudad_destino, plataforma.telefono, trayecto.distancia_recorrida, trayecto.duracion_total
 FROM llega
 INNER JOIN trayecto ON llega.id_trayecto = trayecto.id_trayecto
 INNER JOIN plataforma ON llega.id_plataforma = plataforma.id_plataforma
-INNER JOIN destino_paquete ON plataforma.ubicacion = destino_paquete.id_destino
+INNER JOIN destino ON plataforma.ubicacion = destino.id_destino
 WHERE llega.id_trayecto = 1;
 
 /*CONSULTA 9*/
