@@ -3,6 +3,8 @@ USE `QDS`;
 
 -- Borrado de tablas
 
+SET FOREIGN_KEY_CHECKS = 0;
+
 DROP TABLE IF EXISTS `almacen_central`;
 DROP TABLE IF EXISTS `almacen_cliente`;
 DROP TABLE IF EXISTS `plataforma`;
@@ -28,6 +30,7 @@ DROP TABLE IF EXISTS `transporta`;
 DROP TABLE IF EXISTS `trayecto`;
 DROP TABLE IF EXISTS `trayecto_departamentos`;
 
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- Creacion de las estructuras de las tablas
 
@@ -267,10 +270,10 @@ ALTER TABLE `trayecto_departamentos`
   ADD KEY `id_trayecto` (`id_trayecto`),
   ADD CONSTRAINT `fk_trayecto_departamentos` FOREIGN KEY (`id_trayecto`) REFERENCES `trayecto` (`id_trayecto`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-ALTER TABLE `solicitud`
-    ADD CONSTRAINT `fk_usuario_solicitud` FOREIGN KEY (`usuario`) REFERENCES `login` (`nom_usu`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    ADD CONSTRAINT `fk_usuario_destino_solicitud` FOREIGN KEY (`usuario_destino`) REFERENCES `login` (`nom_usu`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    ADD CONSTRAINT `fk_almacen_cliente_solicitud` FOREIGN KEY (`id_almacen_cliente`) REFERENCES `almacen_cliente` (`id_almacen_cliente`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+-- ALTER TABLE `solicitud`
+--     ADD CONSTRAINT `fk_usuario_solicitud` FOREIGN KEY (`usuario`) REFERENCES `login` (`nom_usu`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+--     ADD CONSTRAINT `fk_usuario_destino_solicitud` FOREIGN KEY (`usuario_destino`) REFERENCES `login` (`nom_usu`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+--     ADD CONSTRAINT `fk_almacen_cliente_solicitud` FOREIGN KEY (`id_almacen_cliente`) REFERENCES `almacen_cliente` (`id_almacen_cliente`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- Constraints de tipo Check
 
@@ -459,7 +462,50 @@ DELIMITER ;
 
 -- VISTAS
 
-CREATE VIEW mostrar_camiones
+CREATE VIEW `mostrar_camiones`
 AS
-SELECT * FROM vehiculo
-INNER JOIN camion ON vehiculo.id_vehiculo = camion.id_camion
+SELECT
+    camion.id_camion,
+    SUM(paquete.peso) AS peso_total_actual_camion,
+    SUM(paquete.volumen) AS volumen_total_actual_camion,
+    vehiculo.matricula,
+    vehiculo.volumen_disponible,
+    vehiculo.peso_soportado,
+    vehiculo.estado
+FROM camion
+INNER JOIN vehiculo ON camion.id_camion = vehiculo.id_vehiculo
+LEFT JOIN transporta ON camion.id_camion = transporta.id_camion
+LEFT JOIN lote ON transporta.id_lote = lote.id_lote
+LEFT JOIN (
+    SELECT
+        forma.id_lote,
+        SUM(paquete.peso) AS peso_lote
+    FROM forma
+    LEFT JOIN paquete ON forma.id_paquete = paquete.id_paquete
+    GROUP BY forma.id_lote
+) AS pesos_lotes ON lote.id_lote = pesos_lotes.id_lote
+LEFT JOIN (
+    SELECT
+        forma.id_lote,
+        SUM(paquete.volumen) AS volumen_lote
+    FROM forma
+    LEFT JOIN paquete ON forma.id_paquete = paquete.id_paquete
+    GROUP BY forma.id_lote
+) AS volumenes_lotes ON lote.id_lote = volumenes_lotes.id_lote
+LEFT JOIN forma ON lote.id_lote = forma.id_lote
+LEFT JOIN paquete ON forma.id_paquete = paquete.id_paquete
+GROUP BY camion.id_camion;
+
+CREATE VIEW `mostrar_camionetas`
+AS
+SELECT camioneta.id_camioneta, vehiculo.matricula, vehiculo.volumen_disponible, vehiculo.peso_soportado, vehiculo.estado
+FROM `vehiculo`
+INNER JOIN camioneta ON vehiculo.id_vehiculo = camioneta.id_camioneta
+
+CREATE VIEW `mostrar_lotes`
+AS
+SELECT lote.id_lote, SUM(paquete.peso) AS peso, SUM(paquete.volumen) AS volumen, COUNT(forma.id_paquete) AS cant_paquetes, lote.tipo, lote.estado, lote.fragil, lote.detalles, lote.fecha_ideal_traslado, lote.hora_ideal_traslado
+FROM lote
+LEFT JOIN forma ON lote.id_lote = forma.id_lote
+LEFT JOIN paquete ON forma.id_paquete = paquete.id_paquete
+GROUP BY lote.id_lote;
