@@ -1,5 +1,5 @@
-
-USE `datavision`;
+CREATE DATABASE QDS;
+USE QDS;
 
 -- Borrado de tablas
 
@@ -96,9 +96,7 @@ CREATE TABLE `lote` (
   `tipo` varchar(20) DEFAULT NULL,
   `estado` varchar(35) DEFAULT 'En almacén central',
   `fragil` varchar(2) NOT NULL,
-  `detalles` varchar(150) DEFAULT NULL,
-  `fecha_ideal_traslado` date DEFAULT NULL,
-  `hora_ideal_traslado` time DEFAULT NULL
+  `detalles` varchar(150) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `paquete` (
@@ -187,10 +185,16 @@ CREATE TABLE `llega` (
 );
 
 CREATE TABLE `lleva` (
-	`id_lote` int PRIMARY KEY NOT NULL,
+	`id_lote` int NOT NULL,
   `id_plataforma` int NOT NULL,
+  `fecha_entrega_ideal` date DEFAULT NULL,
+  `hora_entrega_ideal` time DEFAULT NULL,
   `fecha_llegada` date DEFAULT NULL,
-  `hora_llegada` time DEFAULT NULL
+  `hora_llegada` time DEFAULT NULL,
+  `fecha_salida` date DEFAULT NULL,
+  `hora_salida` time DEFAULT NULL,
+  `almacen_central_salida` int DEFAULT NULL,
+  PRIMARY KEY (id_lote, fecha_salida, hora_salida)
 );
 
 CREATE TABLE `recoge` (
@@ -256,8 +260,9 @@ ALTER TABLE `llega`
     ADD CONSTRAINT `fk_id_plataforma2` FOREIGN KEY (id_plataforma) REFERENCES plataforma(id_plataforma) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `lleva`
-    ADD CONSTRAINT `fk_id_lote4` FOREIGN KEY (id_lote) REFERENCES transporta(id_lote) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    ADD CONSTRAINT `fk_id_plataforma` FOREIGN KEY (id_plataforma) REFERENCES plataforma(id_plataforma) ON DELETE NO ACTION ON UPDATE NO ACTION;
+    ADD CONSTRAINT `fk_id_lote4` FOREIGN KEY (id_lote) REFERENCES lote(id_lote) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    ADD CONSTRAINT `fk_id_plataforma` FOREIGN KEY (id_plataforma) REFERENCES plataforma(id_plataforma) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    ADD CONSTRAINT `fk_id_almacen_central_salida2` FOREIGN KEY (almacen_central_salida) REFERENCES almacen_central(id_almacen_central) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `recoge`
   ADD CONSTRAINT `fk_id_camioneta2` FOREIGN KEY (id_camioneta) REFERENCES camioneta(id_camioneta) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -509,10 +514,11 @@ INNER JOIN camioneta ON vehiculo.id_vehiculo = camioneta.id_camioneta;
 
 CREATE VIEW `mostrar_lotes`
 AS
-SELECT lote.id_lote, SUM(paquete.peso) AS peso, SUM(paquete.volumen) AS volumen, COUNT(forma.id_paquete) AS cant_paquetes, lote.tipo, lote.estado, lote.fragil, lote.detalles, lote.fecha_ideal_traslado, lote.hora_ideal_traslado
+SELECT lote.id_lote, SUM(paquete.peso) AS peso, SUM(paquete.volumen) AS volumen, COUNT(forma.id_paquete) AS cant_paquetes, lote.tipo, lote.estado, lote.fragil, lote.detalles, transporta.id_camion
 FROM lote
 LEFT JOIN forma ON lote.id_lote = forma.id_lote
 LEFT JOIN paquete ON forma.id_paquete = paquete.id_paquete
+LEFT JOIN transporta ON lote.id_lote = transporta.id_lote
 GROUP BY lote.id_lote;
 
 CREATE VIEW `mostrar_paquetes_empresa`

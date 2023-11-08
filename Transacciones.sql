@@ -182,10 +182,10 @@ START TRANSACTION;
 
 INSERT INTO `login` (`nom_usu`, `mail`, `tipo_usu`, `contrasenia`)
 VALUES
-('admin', 'administrador@gmail.com', 'admin', 'qds000L'),
-('camionero', 'camionero@gmail.com', 'camionero', 'HsuC32199'),
-('almacenero', 'almacenero@gmail.com', 'almacenero', 'HsuAL32199'),
-('CRECOM', 'crecom23@gmail.com', 'empresa', 'CrecomCambiandoVidas130');
+('admin', 'administrador@gmail.com', 'admin', '$2y$10$BHT0gjB.xj1G7T4FiIwT9eQxrf1WhPglvpfxWQf5mxkj57/aoyIdS'),
+('camionero', 'camionero@gmail.com', 'camionero', '$2y$10$oq4/wuuDS5QVSOczxdXBpOO81hgo.pj74362vLJ1ykb3trYadQiWu'),
+('almacenero', 'almacenero@gmail.com', 'almacenero', '$2y$10$E2gOyv9I0xaHHxGVFw6FV.GhF.kWvR1mdL7bbCBjxkgLu/QI2I6He'),
+('CRECOM', 'crecom23@gmail.com', 'empresa', '$2y$10$6.Q8/cRTAEuA06N7.9ieSupmIT1V.KuU4SIkuldvHw6p9gyyIg0nW');
 
 COMMIT;
 
