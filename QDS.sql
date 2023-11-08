@@ -1,5 +1,5 @@
-CREATE DATABASE `QDS`;
-USE `QDS`;
+
+USE `datavision`;
 
 -- Borrado de tablas
 
@@ -29,6 +29,11 @@ DROP TABLE IF EXISTS `tiene`;
 DROP TABLE IF EXISTS `transporta`;
 DROP TABLE IF EXISTS `trayecto`;
 DROP TABLE IF EXISTS `trayecto_departamentos`;
+
+DROP VIEW IF EXISTS `mostrar_camiones`;
+DROP VIEW IF EXISTS `mostrar_camionetas`;
+DROP VIEW IF EXISTS `mostrar_lotes`;
+DROP VIEW IF EXISTS `mostrar_paquetes_empresa`;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -137,7 +142,7 @@ CREATE TABLE `login` (
   `nom_usu` varchar(30) NOT NULL UNIQUE,
   `mail` varchar(45) NOT NULL UNIQUE,
   `tipo_usu` varchar(30) NOT NULL,
-  `contrasenia` varchar(30) NOT NULL
+  `contrasenia` varchar(65) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `tiene` (
@@ -500,7 +505,7 @@ CREATE VIEW `mostrar_camionetas`
 AS
 SELECT camioneta.id_camioneta, vehiculo.matricula, vehiculo.volumen_disponible, vehiculo.peso_soportado, vehiculo.estado
 FROM `vehiculo`
-INNER JOIN camioneta ON vehiculo.id_vehiculo = camioneta.id_camioneta
+INNER JOIN camioneta ON vehiculo.id_vehiculo = camioneta.id_camioneta;
 
 CREATE VIEW `mostrar_lotes`
 AS
@@ -509,3 +514,13 @@ FROM lote
 LEFT JOIN forma ON lote.id_lote = forma.id_lote
 LEFT JOIN paquete ON forma.id_paquete = paquete.id_paquete
 GROUP BY lote.id_lote;
+
+CREATE VIEW `mostrar_paquetes_empresa`
+AS
+SELECT paquete.id_paquete, paquete.codigo_seguimiento, paquete.tipo, paquete.volumen, paquete.peso, paquete.fragil, paquete.detalles, paquete.mail_destinatario, paquete.estado, destino.departamento_destino, destino.ciudad_destino, paquete.fecha_recibido, paquete.hora_recibido, almacen_cliente.direccion AS almacen_cliente_direccion, paquete.direccion AS paquete_direccion, almacen_cliente.telefono, almacen_cliente.id_almacen_cliente, empresa_cliente.id_empresa_cliente, empresa_cliente.rut, empresa_cliente.nombre_de_empresa, empresa_cliente.mail AS mail_empresa
+FROM paquete
+INNER JOIN destino ON paquete.id_destino = destino.id_destino
+INNER JOIN almacena ON paquete.id_paquete = almacena.id_paquete
+INNER JOIN almacen_cliente ON almacen_cliente.id_almacen_cliente = almacena.id_almacen_cliente
+INNER JOIN tiene ON almacena.id_almacen_cliente = tiene.id_almacen_cliente
+INNER JOIN empresa_cliente ON tiene.id_empresa_cliente = empresa_cliente.id_empresa_cliente;
