@@ -1,4 +1,5 @@
-
+CREATE DATABASE QDS;
+USE QDS;
 
 -- Borrado de tablas
 
