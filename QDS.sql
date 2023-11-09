@@ -1,5 +1,4 @@
-CREATE DATABASE QDS;
-USE QDS;
+
 
 -- Borrado de tablas
 
@@ -62,7 +61,7 @@ CREATE TABLE `plataforma` (
 CREATE TABLE `vehiculo` (
   `id_vehiculo` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `matricula` varchar(8) NOT NULL UNIQUE,
-  `volumen_disponible` int NOT NULL,
+  `volumen_maximo` int NOT NULL,
   `peso_soportado` int NOT NULL,
   `estado` varchar(20) DEFAULT 'Disponible' NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -185,15 +184,15 @@ CREATE TABLE `llega` (
 );
 
 CREATE TABLE `lleva` (
-	`id_lote` int NOT NULL,
+  `id_lote` int NOT NULL,
   `id_plataforma` int NOT NULL,
-  `fecha_entrega_ideal` date DEFAULT NULL,
-  `hora_entrega_ideal` time DEFAULT NULL,
+  `fecha_entrega_ideal` date NOT NULL,
+  `hora_entrega_ideal` time NOT NULL,
   `fecha_llegada` date DEFAULT NULL,
   `hora_llegada` time DEFAULT NULL,
-  `fecha_salida` date DEFAULT NULL,
-  `hora_salida` time DEFAULT NULL,
-  `almacen_central_salida` int DEFAULT NULL,
+  `fecha_salida` date NOT NULL,
+  `hora_salida` time NOT NULL,
+  `almacen_central_salida` int NOT NULL,
   PRIMARY KEY (id_lote, fecha_salida, hora_salida)
 );
 
@@ -207,7 +206,7 @@ CREATE TABLE `recoge` (
   `fecha_salida` date NOT NULL,
   `hora_salida` time NOT NULL,
   `almacen_central_salida` int NOT NULL,
-  PRIMARY KEY (id_camioneta, id_almacen_cliente, fecha_recogida_ideal, hora_recogida_ideal, fecha_salida, hora_salida, almacen_central_salida)
+  PRIMARY KEY (id_camioneta, fecha_salida, hora_salida)
 );
 
 CREATE TABLE `solicitud` (
@@ -479,7 +478,7 @@ SELECT
     SUM(paquete.peso) AS peso_total_actual_camion,
     SUM(paquete.volumen) AS volumen_total_actual_camion,
     vehiculo.matricula,
-    vehiculo.volumen_disponible,
+    vehiculo.volumen_maximo,
     vehiculo.peso_soportado,
     vehiculo.estado
 FROM camion
@@ -508,7 +507,7 @@ GROUP BY camion.id_camion;
 
 CREATE VIEW `mostrar_camionetas`
 AS
-SELECT camioneta.id_camioneta, vehiculo.matricula, vehiculo.volumen_disponible, vehiculo.peso_soportado, vehiculo.estado
+SELECT camioneta.id_camioneta, vehiculo.matricula, vehiculo.volumen_maximo, vehiculo.peso_soportado, vehiculo.estado
 FROM `vehiculo`
 INNER JOIN camioneta ON vehiculo.id_vehiculo = camioneta.id_camioneta;
 

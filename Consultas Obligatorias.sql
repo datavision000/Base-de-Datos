@@ -26,7 +26,7 @@ FROM vehiculo
 INNER JOIN camion ON camion.id_camion = vehiculo.id_vehiculo;
 
 /*CONSULTA 4*/
-SELECT camion.id_camion, vehiculo.matricula, vehiculo.volumen_disponible, vehiculo.peso_soportado, vehiculo.estado, lleva.id_plataforma, plataforma.direccion
+SELECT camion.id_camion, vehiculo.matricula, vehiculo.volumen.maximo, vehiculo.peso_soportado, vehiculo.estado, lleva.id_plataforma, plataforma.direccion
 FROM lleva
 INNER JOIN transporta ON lleva.id_lote = transporta.id_lote
 INNER JOIN camion ON transporta.id_camion = camion.id_camion

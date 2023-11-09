@@ -64,7 +64,7 @@ COMMIT;
 
 START TRANSACTION;
 
-INSERT INTO `vehiculo` (`matricula`, `volumen_disponible`, `peso_soportado`)
+INSERT INTO `vehiculo` (`matricula`, `volumen_maximo`, `peso_soportado`)
 VALUES
 ("STP-3444", 150, 18000),
 ("STP-6934", 150, 16000),
@@ -72,7 +72,7 @@ VALUES
 ("STP-6500", 180, 20000),
 ("STM-7765", 110, 80000);
 
-INSERT INTO `vehiculo` (`matricula`, `volumen_disponible`, `peso_soportado`, `estado`)
+INSERT INTO `vehiculo` (`matricula`, `volumen_maximo`, `peso_soportado`, `estado`)
 VALUES
 ("STM-5743", 1234, 1234, "Fuera de servicio"),
 ("STM-1234", 225, 373, "Fuera de servicio"),
@@ -136,17 +136,17 @@ INSERT INTO `lote` (`tipo`, `fragil`)
 VALUES
 ('Vidrio', 'Si'),
 ('Líquido', 'Si');
-INSERT INTO `lote` (`fragil`, `fecha_ideal_traslado`, `hora_ideal_traslado`)
+INSERT INTO `lote` (`fragil`)
 VALUES
-('No', '2023-09-22', '16:00:00'),
-('No', '2023-10-31', '23:00:00'),
-('No', '2023-11-15', '20:00:00'),
-('No', '2023-11-18', '20:00:00'),
-('No', '2023-11-25', '20:00:00'),
-('No', '2023-10-10', '20:00:00'),
-('No', '2023-12-15', '20:00:00'),
-('No', '2023-12-24', '20:00:00'),
-('No', '2023-11-11', '20:00:00');
+('No'),
+('No'),
+('No'),
+('No'),
+('No'),
+('No'),
+('No'),
+('No'),
+('No');
 
 
 COMMIT;
@@ -208,13 +208,6 @@ VALUES
 ('5', '1'),
 ('6', '2'),
 ('9', '3');
-
-INSERT INTO `lleva` (`id_lote`, `id_plataforma`, `fecha_llegada`)
-VALUES
-('9', '9', '2023-05-23'),
-('6', '8', '2023-06-08'),
-('5', '5', NULL);
-
 
 INSERT INTO `maneja` (`id_vehiculo`, `id_camionero`, `fecha_inicio_manejo`, `hora_inicio_manejo`, `fecha_fin_manejo`, `hora_fin_manejo`)
 VALUES
