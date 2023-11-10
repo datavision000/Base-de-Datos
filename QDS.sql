@@ -140,7 +140,7 @@ CREATE TABLE `login` (
   `nom_usu` varchar(30) NOT NULL UNIQUE,
   `mail` varchar(45) NOT NULL UNIQUE,
   `tipo_usu` varchar(30) NOT NULL,
-  `contrasenia` varchar(65) NOT NULL
+  `contrasenia` varchar(75) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `tiene` (
@@ -207,7 +207,7 @@ CREATE TABLE `recoge` (
   `fecha_salida` date NOT NULL,
   `hora_salida` time NOT NULL,
   `almacen_central_salida` int NOT NULL,
-  PRIMARY KEY (id_camioneta, fecha_salida, hora_salida)
+  PRIMARY KEY (id_camioneta, fecha_recogida_ideal, hora_recogida_ideal)
 );
 
 CREATE TABLE `solicitud` (
