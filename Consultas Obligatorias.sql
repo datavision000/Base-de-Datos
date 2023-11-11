@@ -9,14 +9,13 @@ paquete.detalles,
 paquete.peso,
 paquete.volumen,
 CONCAT(destino.ciudad_destino, ', ', destino.departamento_destino) AS destino,
-CONCAT(lleva.fecha_llegada, ' a las ', lleva.hora_llegada) AS llegada
+lleva.fecha_llegada
 FROM lleva
 INNER JOIN forma ON lleva.id_lote = forma.id_lote
 INNER JOIN paquete ON forma.id_paquete = paquete.id_paquete
 INNER JOIN destino ON paquete.id_destino = destino.id_destino
 WHERE
 lleva.fecha_llegada IS NOT NULL
-AND lleva.hora_llegada IS NOT NULL
 AND MONTH(lleva.fecha_llegada) = 5
 AND YEAR(lleva.fecha_llegada) = 2023
 AND destino.ciudad_destino = "Melo";
@@ -26,7 +25,7 @@ AND destino.ciudad_destino = "Melo";
 SELECT
 plataforma.id_plataforma
 plataforma.direccion as direccion_plataforma
-CONCAT(lleva.fecha_llegada, ' a las ', lleva.hora_llegada) AS llegada_paquete,
+lleva.fecha_llegada,
 paquete.id_paquete,
 paquete.mail_destinatario,
 paquete.direccion,

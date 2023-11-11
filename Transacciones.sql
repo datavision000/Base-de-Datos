@@ -209,11 +209,6 @@ VALUES
 ('6', '2'),
 ('9', '3');
 
-INSERT INTO `maneja` (`id_vehiculo`, `id_camionero`, `fecha_inicio_manejo`, `hora_inicio_manejo`, `fecha_fin_manejo`, `hora_fin_manejo`)
-VALUES
-('1', '1', '2023-10-02', '15:31:42', '2023-10-03', '00:31:42'),
-('2', '2', '2023-10-02', '15:31:42', '2023-10-03', '00:31:42');
-
 INSERT INTO `trayecto` (`destino`, `destinos_intermedios`, `distancia_recorrida`, `duracion_total`)
 VALUES
 ('Tacuarembó', 'Canelones', 13000, 400),

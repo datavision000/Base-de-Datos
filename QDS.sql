@@ -96,7 +96,8 @@ CREATE TABLE `lote` (
   `tipo` varchar(20) DEFAULT NULL,
   `estado` varchar(35) DEFAULT 'En almacén central',
   `fragil` varchar(2) NOT NULL,
-  `detalles` varchar(150) DEFAULT NULL
+  `detalles` varchar(150) DEFAULT NULL,
+  `id_destino` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `paquete` (
@@ -111,8 +112,7 @@ CREATE TABLE `paquete` (
   `mail_destinatario` varchar(45) NOT NULL,
   `estado` varchar(35) DEFAULT 'En almacén cliente',
   `id_destino` int NOT NULL,
-  `fecha_recibido` date DEFAULT NULL,
-  `hora_recibido` time DEFAULT NULL
+  `fecha_recibido` datetime DEFAULT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `destino` (
@@ -128,11 +128,6 @@ CREATE TABLE `trayecto` (
   `destinos_intermedios` MEDIUMTEXT DEFAULT NULL,
   `distancia_recorrida` int NOT NULL,
   `duracion_total` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-CREATE TABLE `trayecto_departamentos` (
-  `id_trayecto` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `departamento_atravesado` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `login` (
@@ -164,13 +159,14 @@ CREATE TABLE `almacena1` (
 );
 
 CREATE TABLE `maneja` (
+  `id_maneja` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`id_vehiculo` int NOT NULL,
-    `id_camionero` int NOT NULL,
-   `fecha_inicio_manejo` DATE NOT NULL,
-    `hora_inicio_manejo` TIME NOT NULL,
-    `fecha_fin_manejo` DATE NOT NULL,
-    `hora_fin_manejo` TIME NOT NULL,
-    PRIMARY KEY (id_vehiculo, id_camionero)
+  `id_camionero` int NOT NULL,
+  `fecha_inicio_manejo` DATE NOT NULL,
+  `fecha_fin_manejo` DATE NOT NULL,
+  CONSTRAINT chk_fechas_maneja CHECK (fecha_inicio_manejo <= fecha_fin_manejo),
+  UNIQUE (id_vehiculo, fecha_inicio_manejo, fecha_fin_manejo),
+  UNIQUE (id_camionero, fecha_inicio_manejo, fecha_fin_manejo)
 );
 
 CREATE TABLE `transporta` (
@@ -185,29 +181,28 @@ CREATE TABLE `llega` (
 );
 
 CREATE TABLE `lleva` (
-  `id_lote` int NOT NULL,
+  `id_camion` int NOT NULL,
   `id_plataforma` int NOT NULL,
-  `fecha_entrega_ideal` date NOT NULL,
-  `hora_entrega_ideal` time NOT NULL,
-  `fecha_llegada` date DEFAULT NULL,
-  `hora_llegada` time DEFAULT NULL,
-  `fecha_salida` date NOT NULL,
-  `hora_salida` time NOT NULL,
+  `fecha_entrega_ideal` datetime NOT NULL,
+  `fecha_llegada` datetime DEFAULT NULL,
+  `fecha_salida` datetime NOT NULL,
   `almacen_central_salida` int NOT NULL,
-  PRIMARY KEY (id_lote, fecha_salida, hora_salida)
+  CONSTRAINT chk_fechas1_lleva CHECK (fecha_salida < fecha_llegada),
+  CONSTRAINT chk_fechas2_lleva CHECK (fecha_salida < fecha_entrega_ideal),
+  PRIMARY KEY (id_camion, fecha_entrega_ideal)
 );
 
 CREATE TABLE `recoge` (
 	`id_camioneta` int NOT NULL,
   `id_almacen_cliente` int NOT NULL,
-  `fecha_recogida_ideal` date NOT NULL,
-  `hora_recogida_ideal` time NOT NULL,
-  `fecha_recogida` date DEFAULT NULL,
-  `hora_recogida` time DEFAULT NULL,
-  `fecha_salida` date NOT NULL,
-  `hora_salida` time NOT NULL,
+  `fecha_recogida_ideal` datetime NOT NULL,
+  `fecha_recogida` datetime DEFAULT NULL,
+  `fecha_salida` datetime NOT NULL,
+  `fecha_vuelta` datetime NOT NULL,
   `almacen_central_salida` int NOT NULL,
-  PRIMARY KEY (id_camioneta, fecha_recogida_ideal, hora_recogida_ideal)
+  CONSTRAINT chk_fechas1_recoge CHECK (fecha_salida < fecha_recogida),
+  CONSTRAINT chk_fechas2_recoge CHECK (fecha_salida < fecha_recogida_ideal),
+  PRIMARY KEY (id_camioneta, fecha_recogida_ideal)
 );
 
 CREATE TABLE `solicitud` (
@@ -217,10 +212,8 @@ CREATE TABLE `solicitud` (
   `detalles` varchar(150) NOT NULL,
   `estado` varchar(10) NOT NULL,
   `id_almacen_cliente` int NOT NULL,
-  `fecha_recogida_ideal` date NOT NULL,
-  `hora_recogida_ideal` time NOT NULL,
-  `fecha_solicitud` date NOT NULL,
-  `hora_solicitud` time NOT NULL
+  `fecha_recogida_ideal` datetime NOT NULL,
+  `fecha_solicitud` datetime NOT NULL
 );
 
 -- Constraints de tipo Foreign Key
@@ -260,7 +253,7 @@ ALTER TABLE `llega`
     ADD CONSTRAINT `fk_id_plataforma2` FOREIGN KEY (id_plataforma) REFERENCES plataforma(id_plataforma) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `lleva`
-    ADD CONSTRAINT `fk_id_lote4` FOREIGN KEY (id_lote) REFERENCES lote(id_lote) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    ADD CONSTRAINT `fk_id_camion3` FOREIGN KEY (id_camion) REFERENCES camion(id_camion) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_id_plataforma` FOREIGN KEY (id_plataforma) REFERENCES plataforma(id_plataforma) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_id_almacen_central_salida2` FOREIGN KEY (almacen_central_salida) REFERENCES almacen_central(id_almacen_central) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
@@ -276,9 +269,8 @@ ALTER TABLE `paquete`
 ALTER TABLE `plataforma`
   ADD CONSTRAINT `fk_ubicacion_plataforma` FOREIGN KEY (`ubicacion`) REFERENCES `destino` (`id_destino`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-ALTER TABLE `trayecto_departamentos`
-  ADD KEY `id_trayecto` (`id_trayecto`),
-  ADD CONSTRAINT `fk_trayecto_departamentos` FOREIGN KEY (`id_trayecto`) REFERENCES `trayecto` (`id_trayecto`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `lote`
+  ADD CONSTRAINT `fk_destino_lote` FOREIGN KEY (`id_destino`) REFERENCES `destino` (`id_destino`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- ALTER TABLE `solicitud`
 --     ADD CONSTRAINT `fk_usuario_solicitud` FOREIGN KEY (`usuario`) REFERENCES `login` (`nom_usu`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -523,7 +515,7 @@ GROUP BY lote.id_lote;
 
 CREATE VIEW `mostrar_paquetes_empresa`
 AS
-SELECT paquete.id_paquete, paquete.codigo_seguimiento, paquete.tipo, paquete.volumen, paquete.peso, paquete.fragil, paquete.detalles, paquete.mail_destinatario, paquete.estado, destino.departamento_destino, destino.ciudad_destino, paquete.fecha_recibido, paquete.hora_recibido, almacen_cliente.direccion AS almacen_cliente_direccion, paquete.direccion AS paquete_direccion, almacen_cliente.telefono, almacen_cliente.id_almacen_cliente, empresa_cliente.id_empresa_cliente, empresa_cliente.rut, empresa_cliente.nombre_de_empresa, empresa_cliente.mail AS mail_empresa
+SELECT paquete.id_paquete, paquete.codigo_seguimiento, paquete.tipo, paquete.volumen, paquete.peso, paquete.fragil, paquete.detalles, paquete.mail_destinatario, paquete.estado, destino.departamento_destino, destino.ciudad_destino, paquete.fecha_recibido, almacen_cliente.direccion AS almacen_cliente_direccion, paquete.direccion AS paquete_direccion, almacen_cliente.telefono, almacen_cliente.id_almacen_cliente, empresa_cliente.id_empresa_cliente, empresa_cliente.rut, empresa_cliente.nombre_de_empresa, empresa_cliente.mail AS mail_empresa
 FROM paquete
 INNER JOIN destino ON paquete.id_destino = destino.id_destino
 INNER JOIN almacena ON paquete.id_paquete = almacena.id_paquete
