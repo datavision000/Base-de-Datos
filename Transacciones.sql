@@ -132,22 +132,20 @@ COMMIT;
 
 START TRANSACTION;
 
-INSERT INTO `lote` (`tipo`, `fragil`)
+INSERT INTO `lote` (`tipo`, `fragil`, `id_destino`)
 VALUES
-('Vidrio', 'Si'),
-('Líquido', 'Si');
-INSERT INTO `lote` (`fragil`)
+('Vidrio', 'Si', 1),
+('Líquido', 'Si', 1);
+INSERT INTO `lote` (`fragil`, `id_destino`)
 VALUES
-('No'),
-('No'),
-('No'),
-('No'),
-('No'),
-('No'),
-('No'),
-('No'),
-('No');
-
+('No', 1),
+('No', 1),
+('No', 1),
+('No', 1),
+('No', 1),
+('No', 1),
+('No', 1),
+('No', 1);
 
 COMMIT;
 

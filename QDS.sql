@@ -28,8 +28,6 @@ DROP TABLE IF EXISTS `solicitud`;
 DROP TABLE IF EXISTS `tiene`;
 DROP TABLE IF EXISTS `transporta`;
 DROP TABLE IF EXISTS `trayecto`;
-DROP TABLE IF EXISTS `trayecto_departamentos`;
-
 DROP VIEW IF EXISTS `mostrar_camiones`;
 DROP VIEW IF EXISTS `mostrar_camionetas`;
 DROP VIEW IF EXISTS `mostrar_lotes`;
@@ -112,7 +110,8 @@ CREATE TABLE `paquete` (
   `mail_destinatario` varchar(45) NOT NULL,
   `estado` varchar(35) DEFAULT 'En almacén cliente',
   `id_destino` int NOT NULL,
-  `fecha_recibido` datetime DEFAULT NULL,
+  `fecha_recibido` datetime DEFAULT NULL
+  -- CONSTRAINT fecha_recibido_valida CHECK (fecha_recibido <= NOW())
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `destino` (
@@ -165,6 +164,8 @@ CREATE TABLE `maneja` (
   `fecha_inicio_manejo` DATE NOT NULL,
   `fecha_fin_manejo` DATE NOT NULL,
   CONSTRAINT chk_fechas_maneja CHECK (fecha_inicio_manejo <= fecha_fin_manejo),
+  -- CONSTRAINT fecha_valida_inicio_maneja CHECK (fecha_inicio_manejo >= NOW()),
+  -- CONSTRAINT fecha_valida_fin_maneja CHECK (fecha_fin_manejo >= NOW()),
   UNIQUE (id_vehiculo, fecha_inicio_manejo, fecha_fin_manejo),
   UNIQUE (id_camionero, fecha_inicio_manejo, fecha_fin_manejo)
 );
@@ -189,6 +190,9 @@ CREATE TABLE `lleva` (
   `almacen_central_salida` int NOT NULL,
   CONSTRAINT chk_fechas1_lleva CHECK (fecha_salida < fecha_llegada),
   CONSTRAINT chk_fechas2_lleva CHECK (fecha_salida < fecha_entrega_ideal),
+  -- CONSTRAINT fecha_valida_entrega_ideal CHECK (fecha_entrega_ideal >= NOW()),
+  -- CONSTRAINT fecha_valida_llegada CHECK (fecha_llegada <= NOW()),
+  -- CONSTRAINT fecha_valida_salida CHECK (fecha_salida >= NOW()),
   PRIMARY KEY (id_camion, fecha_entrega_ideal)
 );
 
@@ -202,6 +206,9 @@ CREATE TABLE `recoge` (
   `almacen_central_salida` int NOT NULL,
   CONSTRAINT chk_fechas1_recoge CHECK (fecha_salida < fecha_recogida),
   CONSTRAINT chk_fechas2_recoge CHECK (fecha_salida < fecha_recogida_ideal),
+  -- CONSTRAINT fecha_valida_recogida_ideal CHECK (fecha_recogida_ideal >= NOW()),
+  -- CONSTRAINT fecha_valida_recogida CHECK (fecha_recogida <= NOW()),
+  -- CONSTRAINT fecha_valida_salida2 CHECK (fecha_salida >= NOW()),
   PRIMARY KEY (id_camioneta, fecha_recogida_ideal)
 );
 
@@ -214,6 +221,8 @@ CREATE TABLE `solicitud` (
   `id_almacen_cliente` int NOT NULL,
   `fecha_recogida_ideal` datetime NOT NULL,
   `fecha_solicitud` datetime NOT NULL
+  -- CONSTRAINT fecha_valida_recogida_ideal2 CHECK (fecha_recogida_ideal >= NOW()),
+  -- CONSTRAINT fecha_valida_solicitud CHECK (fecha_solicitud <= NOW())
 );
 
 -- Constraints de tipo Foreign Key
@@ -461,6 +470,18 @@ BEGIN
 END;
 //
 DELIMITER ;
+
+-- DELIMITER //
+
+-- CREATE TRIGGER paquete_before_insert
+-- BEFORE INSERT ON paquete
+-- FOR EACH ROW
+-- BEGIN
+--     IF NEW.fecha_recibido > NOW() THEN
+--         SIGNAL SQLSTATE '45000'
+--         SET MESSAGE_TEXT = 'Error: fecha_recibido cannot be in the future';
+--     END IF;
+-- END //
 
 -- VISTAS
 
