@@ -108,18 +108,19 @@ vehiculo.matricula AS matricula_camion,
 lleva.id_plataforma,
 plataforma.direccion AS direccion_plataforma,
 paquete.direccion AS direccion_final_paquete,
-lote.estado
+lote.estado,
+lleva.fecha_llegada
 FROM paquete
+INNER JOIN destino ON paquete.id_destino = destino.id_destino
 INNER JOIN forma ON paquete.id_paquete = forma.id_paquete
 INNER JOIN transporta ON forma.id_lote = transporta.id_lote
 INNER JOIN camion ON transporta.id_camion = camion.id_camion
 INNER JOIN vehiculo ON vehiculo.id_vehiculo = camion.id_camion
-INNER JOIN lleva ON transporta.id_lote = lleva.id_lote
+INNER JOIN lleva ON camion.id_camion = lleva.id_camion
 INNER JOIN plataforma ON lleva.id_plataforma = plataforma.id_plataforma
 INNER JOIN lote ON forma.id_lote = lote.id_lote
 WHERE
 lleva.fecha_llegada IS NOT NULL
-AND lleva.hora_llegada IS NOT NULL
 AND DATEDIFF(CURDATE(), lleva.fecha_llegada) > 3;
 
 /*CONSULTA 7: PAQUETES SIN LOTE ASIGNADO Y SUS FECHAS RECIBIDO.*/
@@ -135,7 +136,7 @@ volumen,
 fecha_recibido
 FROM paquete
 WHERE
-id_paquete not in (select id_paquete from forma);
+id_paquete NOT IN (SELECT id_paquete FROM forma);
 
 /*CONSULTA 8: MATRICULA DE LOS CAMIONES QUE SE ENCUENTRAN FUERA DE SERVICIO.*/
 SELECT
@@ -146,9 +147,18 @@ WHERE
 estado = "Fuera de servicio";
 
 /*CONSULTA 9: CAMIONES SIN CONDUCTOR ASIGNADO Y SU ESTADO OPERATIVO.*/
--- SELECT *
--- FROM vehiculo
--- WHERE id_vehiculo not in(select id_vehiculo from maneja);
+SELECT
+camion.id_camion,
+vehiculo.matricula,
+vehiculo.volumen_maximo,
+vehiculo.peso_soportado,
+vehiculo.estado AS estado_operativo_camion
+FROM vehiculo
+LEFT JOIN camion ON vehiculo.id_vehiculo = camion.id_camion
+LEFT JOIN maneja ON vehiculo.id_vehiculo = maneja.id_vehiculo
+WHERE
+id_camion IS NOT NULL
+AND (maneja.id_maneja IS NULL OR maneja.fecha_fin_manejo < CURDATE() OR maneja.fecha_fin_manejo IS NULL);
 
 /*CONSULTA 10: PLATAFORMAS QUE SE ENCUENTRAN EN UN RECORRIDO X.*/
 SELECT plataforma.id_plataforma,

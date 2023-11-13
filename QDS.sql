@@ -77,7 +77,7 @@ CREATE TABLE `camionero` (
   `id_camionero` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `cedula` varchar(8) UNIQUE NOT NULL,
   `nombre_completo` varchar(45) NOT NULL,
-  `estado` varchar(20) DEFAULT NULL,
+  `estado` varchar(20) DEFAULT 'Disponible',
   `mail` varchar(45) NOT NULL UNIQUE,
   `telefono` varchar(20) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -111,7 +111,6 @@ CREATE TABLE `paquete` (
   `estado` varchar(35) DEFAULT 'En almacén cliente',
   `id_destino` int NOT NULL,
   `fecha_recibido` datetime DEFAULT NULL
-  -- CONSTRAINT fecha_recibido_valida CHECK (fecha_recibido <= NOW())
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `destino` (
@@ -191,7 +190,6 @@ CREATE TABLE `lleva` (
   CONSTRAINT chk_fechas1_lleva CHECK (fecha_salida < fecha_llegada),
   CONSTRAINT chk_fechas2_lleva CHECK (fecha_salida < fecha_entrega_ideal),
   -- CONSTRAINT fecha_valida_entrega_ideal CHECK (fecha_entrega_ideal >= NOW()),
-  -- CONSTRAINT fecha_valida_llegada CHECK (fecha_llegada <= NOW()),
   -- CONSTRAINT fecha_valida_salida CHECK (fecha_salida >= NOW()),
   PRIMARY KEY (id_camion, fecha_entrega_ideal)
 );
@@ -207,7 +205,6 @@ CREATE TABLE `recoge` (
   CONSTRAINT chk_fechas1_recoge CHECK (fecha_salida < fecha_recogida),
   CONSTRAINT chk_fechas2_recoge CHECK (fecha_salida < fecha_recogida_ideal),
   -- CONSTRAINT fecha_valida_recogida_ideal CHECK (fecha_recogida_ideal >= NOW()),
-  -- CONSTRAINT fecha_valida_recogida CHECK (fecha_recogida <= NOW()),
   -- CONSTRAINT fecha_valida_salida2 CHECK (fecha_salida >= NOW()),
   PRIMARY KEY (id_camioneta, fecha_recogida_ideal)
 );
@@ -222,7 +219,6 @@ CREATE TABLE `solicitud` (
   `fecha_recogida_ideal` datetime NOT NULL,
   `fecha_solicitud` datetime NOT NULL
   -- CONSTRAINT fecha_valida_recogida_ideal2 CHECK (fecha_recogida_ideal >= NOW()),
-  -- CONSTRAINT fecha_valida_solicitud CHECK (fecha_solicitud <= NOW())
 );
 
 -- Constraints de tipo Foreign Key
@@ -286,64 +282,118 @@ ALTER TABLE `lote`
 --     ADD CONSTRAINT `fk_usuario_destino_solicitud` FOREIGN KEY (`usuario_destino`) REFERENCES `login` (`nom_usu`) ON DELETE NO ACTION ON UPDATE NO ACTION,
 --     ADD CONSTRAINT `fk_almacen_cliente_solicitud` FOREIGN KEY (`id_almacen_cliente`) REFERENCES `almacen_cliente` (`id_almacen_cliente`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
--- Constraints de tipo Check
+-- -- Constraints de tipo Check
+
+-- Checks vehiculo
 
 ALTER TABLE `vehiculo`
   ADD CONSTRAINT `chk_matricula_formato`
-  CHECK (`matricula` REGEXP '^[A-S]T[MP]-[0-9][0-9][0-9][0-9]$');
+  CHECK (`matricula` REGEXP '^[A-S]T[MP]-[0-9][0-9][0-9][0-9]$'),
+  ADD CONSTRAINT chk_volumen_maximo_vehiculo
+  CHECK (volumen_maximo > 0),
+  ADD CONSTRAINT chk_peso_soportado_vehiculo
+  CHECK (peso_soportado > 0);
+
+-- Checks camionero
 
 ALTER TABLE `camionero`
   ADD CONSTRAINT `chk_correo_electronico`
-  CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');
- 
-ALTER TABLE `login`
-  ADD CONSTRAINT `chk_correo_electronico2`
-  CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');
- 
-ALTER TABLE `paquete`
-  ADD CONSTRAINT `chk_correo_electronico3`
-  CHECK (`mail_destinatario` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');
- 
-ALTER TABLE `empresa_cliente`
+  CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+  ADD CONSTRAINT chk_nombre_camionero
+  CHECK (nombre_completo REGEXP '^[a-zA-Z ]+$'),
+  ADD CONSTRAINT `chk_telefono1`
+  CHECK (`telefono` REGEXP '^[0-9]+$' OR `telefono` REGEXP '^\\+[0-9]+$'),
+  ADD CONSTRAINT `chk_cedula`
+  CHECK (`cedula` REGEXP '^[0-9]+$'),
+  ADD CONSTRAINT `chk_valores_permitidos_estado_camionero`
+  CHECK (`estado` IN ('Disponible', 'Vehículo asignado', 'En camión (plataforma)', 'No disponible'));
+
+-- Checks almacen central
+
+ALTER TABLE `almacen_central`
+  ADD CONSTRAINT `chk_telefono2`
+  CHECK (`telefono` REGEXP '^[0-9]+$'),
+  ADD CONSTRAINT chk_numero_almacen_central
+  CHECK (numero_almacen >= 0);
+
+-- Checks almacen cliente
+
+ALTER TABLE `almacen_cliente`
+  ADD CONSTRAINT `chk_telefono3`
+  CHECK (`telefono` REGEXP '^[0-9]+$');
+
+-- Checks plataforma
+
+ALTER TABLE `plataforma`
+  ADD CONSTRAINT `chk_telefono4`
+  CHECK (`telefono` REGEXP '^[0-9]+$'),
+  ADD CONSTRAINT chk_volumen_maximo_plataforma
+  CHECK (volumen_maximo > 0);
+
+-- Checks empresa cliente
+
+ALTER TABLE empresa_cliente
+  ADD CONSTRAINT chk_empresa_cliente_rut
+  CHECK (rut REGEXP '^[0-9]+$'),
+  ADD CONSTRAINT chk_empresa_cliente_rut2
+  CHECK (rut > 0),
   ADD CONSTRAINT `chk_correo_electronico4`
   CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');
 
-ALTER TABLE `lote`
-  ADD CONSTRAINT `chk_valores_permitidos_tipo`
-  CHECK (`tipo` IN (NULL, 'Vidrio', 'Líquido', 'Inflamable')),
-  ADD CONSTRAINT `chk_valores_permitidos_fragil`
-  CHECK (`fragil` IN ('Si', 'No'));
+-- Checks paquete
 
 ALTER TABLE `paquete`
   ADD CONSTRAINT `chk_valores_permitidos_tipo2`
   CHECK (`tipo` IN (NULL, 'Vidrio', 'Líquido', 'Inflamable')),
   ADD CONSTRAINT `chk_valores_permitidos_fragil2`
-  CHECK (`fragil` IN ('Si', 'No'));
-
-ALTER TABLE `login`
-  ADD CONSTRAINT `chk_valores_permitidos_tipo_usu`
-  CHECK (`tipo_usu` IN ('admin', 'almacenero', 'camionero', 'empresa'));
-
-ALTER TABLE `solicitud`
-  ADD CONSTRAINT `chk_valores_permitidos_estado_solicitud`
-  CHECK (`estado` IN ('En espera', 'Aceptada', 'Denegada'));
-
-ALTER TABLE `paquete`
-  ADD CONSTRAINT `chk_paquete_positivo_peso`
-  CHECK (`peso` >= 0);
-
-ALTER TABLE `paquete`
+  CHECK (`fragil` IN ('Si', 'No')),
+  ADD CONSTRAINT `chk_correo_electronico3`
+  CHECK (`mail_destinatario` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
   ADD CONSTRAINT `chk_paquete_positivo_volumen`
-  CHECK (`volumen` >= 0);
-
-ALTER TABLE `paquete`
+  CHECK (`volumen` >= 0),
+  ADD CONSTRAINT `chk_paquete_positivo_peso`
+  CHECK (`peso` >= 0),
+  ADD CONSTRAINT chk_codigo_seguimiento
+  CHECK (codigo_seguimiento REGEXP '^[0-9]+$'),
   ADD CONSTRAINT `chk_valores_permitidos_estado_paquete`
   CHECK (`estado` IN ('En almacén cliente', 'En camioneta (central)', 'En almacén central',
   'En almacén central (lote)', 'En almacén central (camión)', 'En camión (plataforma)', 'Entregado'));
 
+-- Checks destino
+
+ALTER TABLE destino
+  ADD CONSTRAINT chk_departamento_destino
+  CHECK (departamento_destino REGEXP '^[a-zA-Z ]+$'),
+  ADD CONSTRAINT chk_ciudad_destino
+  CHECK (ciudad_destino REGEXP '^[a-zA-Z ]+$');
+
+ALTER TABLE `login`
+  ADD CONSTRAINT `chk_correo_electronico2`
+  CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+  ADD CONSTRAINT chk_nom_usu
+  CHECK (nom_usu REGEXP '^[a-zA-Z]+$'),
+  ADD CONSTRAINT `chk_valores_permitidos_tipo_usu`
+  CHECK (`tipo_usu` IN ('admin', 'almacenero', 'camionero', 'empresa'));
+
+-- Checks lote
+
 ALTER TABLE `lote`
+  ADD CONSTRAINT `chk_valores_permitidos_tipo`
+  CHECK (`tipo` IN (NULL, 'Vidrio', 'Líquido', 'Inflamable')),
+  ADD CONSTRAINT `chk_valores_permitidos_fragil`
+  CHECK (`fragil` IN ('Si', 'No')),
   ADD CONSTRAINT `chk_valores_permitidos_estado_lote`
   CHECK (`estado` IN ('En almacén central', 'En almacén central (camión)', 'En camión (plataforma)', 'Entregado'));
+
+-- Checks trayecto
+
+
+
+-- Checks solicitud
+
+ALTER TABLE `solicitud`
+  ADD CONSTRAINT `chk_valores_permitidos_estado_solicitud`
+  CHECK (`estado` IN ('En espera', 'Aceptada', 'Denegada'));
 
 
 -- Creación de triggers
@@ -471,17 +521,125 @@ END;
 //
 DELIMITER ;
 
--- DELIMITER //
+DELIMITER //
+CREATE TRIGGER solicitud_fecha_solicitud
+BEFORE INSERT ON solicitud
+FOR EACH ROW
+BEGIN
+   IF NEW.fecha_solicitud > NOW() THEN
+       SIGNAL SQLSTATE '45000';
+   END IF;
+END;
+//
+DELIMITER ;
 
--- CREATE TRIGGER paquete_before_insert
--- BEFORE INSERT ON paquete
--- FOR EACH ROW
--- BEGIN
---     IF NEW.fecha_recibido > NOW() THEN
---         SIGNAL SQLSTATE '45000'
---         SET MESSAGE_TEXT = 'Error: fecha_recibido cannot be in the future';
---     END IF;
--- END //
+DELIMITER //
+CREATE TRIGGER recoge_fecha_recogida
+BEFORE INSERT ON recoge
+FOR EACH ROW
+BEGIN
+   IF NEW.fecha_recogida > NOW() THEN
+       SIGNAL SQLSTATE '45000';
+   END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER lleva_fecha_llegada
+BEFORE INSERT ON lleva
+FOR EACH ROW
+BEGIN
+   IF NEW.fecha_llegada > NOW() THEN
+       SIGNAL SQLSTATE '45000';
+   END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER lleva_fecha_entrega_ideal
+BEFORE INSERT ON lleva
+FOR EACH ROW
+BEGIN
+   IF NEW.fecha_entrega_ideal < NOW() THEN
+       SIGNAL SQLSTATE '45000';
+   END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER lleva_fecha_salida
+BEFORE INSERT ON lleva
+FOR EACH ROW
+BEGIN
+   IF NEW.fecha_salida < NOW() THEN
+       SIGNAL SQLSTATE '45000';
+   END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER recoge_fecha_recogida_ideal
+BEFORE INSERT ON recoge
+FOR EACH ROW
+BEGIN
+   IF NEW.fecha_recogida_ideal < NOW() THEN
+       SIGNAL SQLSTATE '45000';
+   END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER recoge_fecha_salida
+BEFORE INSERT ON recoge
+FOR EACH ROW
+BEGIN
+   IF NEW.fecha_salida < NOW() THEN
+       SIGNAL SQLSTATE '45000';
+   END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER solicitud_fecha_recogida_ideal
+BEFORE INSERT ON solicitud
+FOR EACH ROW
+BEGIN
+   IF NEW.fecha_recogida_ideal < NOW() THEN
+       SIGNAL SQLSTATE '45000';
+   END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER maneja_fecha_inicio_manejo
+BEFORE INSERT ON maneja
+FOR EACH ROW
+BEGIN
+   IF NEW.fecha_inicio_manejo < NOW() THEN
+       SIGNAL SQLSTATE '45000';
+   END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER maneja_fecha_fin_manejo
+BEFORE INSERT ON maneja
+FOR EACH ROW
+BEGIN
+   IF NEW.fecha_fin_manejo < NOW() THEN
+       SIGNAL SQLSTATE '45000';
+   END IF;
+END;
+//
+DELIMITER ;
 
 -- VISTAS
 
