@@ -40,13 +40,15 @@ SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE `almacen_central` (
   `id_almacen_central` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `numero_almacen` int UNIQUE NOT NULL,
-  `telefono` varchar(20) NOT NULL UNIQUE
+  `telefono` varchar(20) NOT NULL UNIQUE,
+  `estado` varchar(7) DEFAULT 'En uso' NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `almacen_cliente` (
   `id_almacen_cliente` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `telefono` varchar(20) NOT NULL UNIQUE,
-  `direccion` varchar(65) NOT NULL
+  `direccion` varchar(65) NOT NULL,
+  `estado` varchar(7) DEFAULT 'En uso' NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `plataforma` (
@@ -54,7 +56,8 @@ CREATE TABLE `plataforma` (
   `direccion` varchar(65) NOT NULL,
   `volumen_maximo` int NOT NULL,
   `ubicacion` int NOT NULL,
-  `telefono` varchar(20) NOT NULL UNIQUE
+  `telefono` varchar(20) NOT NULL UNIQUE,
+  `estado` varchar(7) DEFAULT 'En uso' NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `vehiculo` (
@@ -86,7 +89,8 @@ CREATE TABLE `empresa_cliente` (
   `id_empresa_cliente` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `rut` varchar(12) NOT NULL,
   `nombre_de_empresa` varchar(50) NOT NULL,
-  `mail` varchar(45) NOT NULL UNIQUE
+  `mail` varchar(45) NOT NULL UNIQUE,
+  `estado` varchar(10) DEFAULT 'Disponible' NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `lote` (
@@ -290,7 +294,9 @@ ALTER TABLE `vehiculo`
   ADD CONSTRAINT chk_volumen_maximo_vehiculo
   CHECK (volumen_maximo > 0),
   ADD CONSTRAINT chk_peso_soportado_vehiculo
-  CHECK (peso_soportado > 0);
+  CHECK (peso_soportado > 0),
+  ADD CONSTRAINT `chk_valores_permitidos_estado_vehiculo`
+  CHECK (`estado` IN ('Disponible', 'Fuera de servicio', 'Camionero asignado', 'De baja'));
 
 -- Checks camionero
 
@@ -304,7 +310,7 @@ ALTER TABLE `camionero`
   ADD CONSTRAINT `chk_cedula`
   CHECK (`cedula` REGEXP '^[0-9]+$'),
   ADD CONSTRAINT `chk_valores_permitidos_estado_camionero`
-  CHECK (`estado` IN ('Disponible', 'Vehículo asignado', 'En camión (plataforma)', 'No disponible'));
+  CHECK (`estado` IN ('Disponible', 'Vehículo asignado', 'No disponible', 'De baja'));
 
 -- Checks almacen central
 
@@ -312,13 +318,17 @@ ALTER TABLE `almacen_central`
   ADD CONSTRAINT `chk_telefono2`
   CHECK (`telefono` REGEXP '^[0-9]+$'),
   ADD CONSTRAINT chk_numero_almacen_central
-  CHECK (numero_almacen >= 0);
+  CHECK (numero_almacen >= 0),
+  ADD CONSTRAINT `chk_valores_permitidos_estado_almacen_central`
+  CHECK (`estado` IN ('En uso', 'De baja'));
 
 -- Checks almacen cliente
 
 ALTER TABLE `almacen_cliente`
   ADD CONSTRAINT `chk_telefono3`
-  CHECK (`telefono` REGEXP '^[0-9]+$');
+  CHECK (`telefono` REGEXP '^[0-9]+$'),
+  ADD CONSTRAINT `chk_valores_permitidos_estado_almacen_cliente`
+  CHECK (`estado` IN ('En uso', 'De baja'));
 
 -- Checks plataforma
 
@@ -326,7 +336,9 @@ ALTER TABLE `plataforma`
   ADD CONSTRAINT `chk_telefono4`
   CHECK (`telefono` REGEXP '^[0-9]+$'),
   ADD CONSTRAINT chk_volumen_maximo_plataforma
-  CHECK (volumen_maximo > 0);
+  CHECK (volumen_maximo > 0),
+  ADD CONSTRAINT `chk_valores_permitidos_estado_plataforma`
+  CHECK (`estado` IN ('En uso', 'De baja'));
 
 -- Checks empresa cliente
 
@@ -336,7 +348,9 @@ ALTER TABLE empresa_cliente
   ADD CONSTRAINT chk_empresa_cliente_rut2
   CHECK (rut > 0),
   ADD CONSTRAINT `chk_correo_electronico4`
-  CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$');
+  CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+  ADD CONSTRAINT `chk_valores_permitidos_estado_empresa_cliente`
+  CHECK (`estado` IN ('Disponible', 'De baja'));
 
 -- Checks paquete
 
@@ -392,7 +406,68 @@ ALTER TABLE `solicitud`
   CHECK (`estado` IN ('En espera', 'Aceptada', 'Denegada'));
 
 
--- Creación de triggers
+-- Triggers bajas lógicas
+
+DELIMITER //
+CREATE TRIGGER baja_logica_camionero
+BEFORE INSERT ON maneja
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM camionero WHERE id_camionero = NEW.id_camionero) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un camionero que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER baja_logica_camionero2
+BEFORE UPDATE ON maneja
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM camionero WHERE id_camionero = NEW.id_camionero) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un camionero que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER baja_logica_vehiculo
+BEFORE INSERT ON maneja
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM vehiculo WHERE id_vehiculo = NEW.id_vehiculo) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un vehiculo que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER baja_logica_vehiculo2
+BEFORE UPDATE ON maneja
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM vehiculo WHERE id_vehiculo = NEW.id_vehiculo) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un vehiculo que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+/* TERMINAR TRIGGERS BAJA LOGICA */
+
+-- Otros triggers
 
 DELIMITER //
 CREATE TRIGGER `tr_actualizar_lote`
