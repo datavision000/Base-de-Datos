@@ -129,7 +129,8 @@ CREATE TABLE `trayecto` (
   `destino` varchar(80) NOT NULL,
   `destinos_intermedios` MEDIUMTEXT DEFAULT NULL,
   `distancia_recorrida` int NOT NULL,
-  `duracion_total` int NOT NULL
+  `duracion_total` int NOT NULL,
+  `estado` varchar(7) DEFAULT 'En uso' NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `login` (
@@ -397,7 +398,9 @@ ALTER TABLE `lote`
 
 -- Checks trayecto
 
-
+ALTER TABLE trayecto
+  ADD CONSTRAINT `chk_valores_permitidos_trayecto_estado`
+  CHECK (`estado` IN ('En uso', 'De baja'));
 
 -- Checks solicitud
 
@@ -460,6 +463,335 @@ BEGIN
   THEN
     SIGNAL SQLSTATE '45000'
     SET MESSAGE_TEXT = 'No se puede asignar un vehiculo que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER baja_logica_almacen_central
+BEFORE INSERT ON almacena1
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM almacen_central WHERE id_almacen_central = NEW.id_almacen_central) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un almacén central que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER baja_logica_almacen_central2
+BEFORE UPDATE ON almacena1
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM almacen_central WHERE id_almacen_central = NEW.id_almacen_central) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un almacén central que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER baja_logica_almacen_cliente
+BEFORE INSERT ON almacena
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM almacen_cliente WHERE id_almacen_cliente = NEW.id_almacen_cliente) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un almacén cliente que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER baja_logica_almacen_cliente2
+BEFORE UPDATE ON almacena
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM almacen_cliente WHERE id_almacen_cliente = NEW.id_almacen_cliente) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un almacén cliente que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER baja_logica_almacen_cliente3
+BEFORE INSERT ON tiene
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM almacen_cliente WHERE id_almacen_cliente = NEW.id_almacen_cliente) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un almacén cliente que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER baja_logica_almacen_cliente4
+BEFORE UPDATE ON tiene
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM almacen_cliente WHERE id_almacen_cliente = NEW.id_almacen_cliente) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un almacén cliente que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER baja_logica_almacen_cliente5
+BEFORE INSERT ON recoge
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM almacen_cliente WHERE id_almacen_cliente = NEW.id_almacen_cliente) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un almacén cliente que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_almacen_cliente6 
+BEFORE UPDATE ON recoge
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM almacen_cliente WHERE id_almacen_cliente = NEW.id_almacen_cliente) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un almacén cliente que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_plataforma1
+BEFORE INSERT ON llega
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM plataforma WHERE id_plataforma = NEW.id_plataforma) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar una plataforma que esté dada de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_plataforma2
+BEFORE UPDATE ON llega
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM plataforma WHERE id_plataforma = NEW.id_plataforma) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar una plataforma que esté dada de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_plataforma3
+BEFORE INSERT ON lleva
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM plataforma WHERE id_plataforma = NEW.id_plataforma) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar una plataforma que esté dada de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_plataforma4
+BEFORE UPDATE ON lleva
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM plataforma WHERE id_plataforma = NEW.id_plataforma) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar una plataforma que esté dada de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_empresa_cliente
+BEFORE INSERT ON tiene
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM empresa_cliente WHERE id_empresa_cliente = NEW.id_empresa_cliente) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar una empresa que esté dada de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_empresa_cliente2
+BEFORE UPDATE ON tiene
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM empresa_cliente WHERE id_empresa_cliente = NEW.id_empresa_cliente) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar una empresa que esté dada de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_camion
+BEFORE INSERT ON transporta
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM vehiculo WHERE id_vehiculo = NEW.id_camion) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un camión que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_camion2
+BEFORE UPDATE ON transporta
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM vehiculo WHERE id_vehiculo = NEW.id_camion) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un camión que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_trayecto
+BEFORE INSERT ON llega
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM trayecto WHERE id_trayecto = NEW.id_trayecto) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un trayecto que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_trayecto2
+BEFORE UPDATE ON llega
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM trayecto WHERE id_trayecto = NEW.id_trayecto) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un trayecto que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_camion3
+BEFORE INSERT ON lleva
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM vehiculo WHERE id_vehiculo = NEW.id_camion) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un camión que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_camion4
+BEFORE UPDATE ON lleva
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM vehiculo WHERE id_vehiculo = NEW.id_camion) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar un camión que esté dado de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_camioneta
+BEFORE INSERT ON recoge
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM vehiculo WHERE id_vehiculo = NEW.id_camioneta) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar una camioneta que esté dada de baja...';
+  END IF;
+END;
+//
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER baja_logica_camioneta2
+BEFORE UPDATE ON recoge
+FOR EACH ROW
+BEGIN
+  IF (SELECT estado FROM camioneta WHERE id_camioneta = NEW.id_camioneta) = 'De baja'
+  THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'No se puede asignar una camioneta que esté dada de baja...';
   END IF;
 END;
 //
