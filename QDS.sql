@@ -224,6 +224,15 @@ CREATE TABLE `solicitud` (
   -- CONSTRAINT fecha_valida_recogida_ideal2 CHECK (fecha_recogida_ideal >= NOW()),
 );
 
+CREATE TABLE `mensaje` (
+	`id_mensaje` int AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  `nombre_remitente` varchar(35) NOT NULL,
+  `mail_remitente` varchar(45) NOT NULL,
+  `mensaje` varchar(300) NOT NULL,
+  `estado` varchar(14) DEFAULT 'Sin responder' NOT NULL,
+  `fecha_mensaje` datetime NOT NULL
+);
+
 -- Constraints de tipo Foreign Key
 
 ALTER TABLE `camion`
@@ -408,6 +417,15 @@ ALTER TABLE `solicitud`
   ADD CONSTRAINT `chk_valores_permitidos_estado_solicitud`
   CHECK (`estado` IN ('En espera', 'Aceptada', 'Denegada'));
 
+-- Checks mensaje
+
+ALTER TABLE `mensaje`
+  ADD CONSTRAINT `chk_correo_electronico5`
+  CHECK (`mail_remitente` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+  ADD CONSTRAINT chk_nombre_remitente
+  CHECK (nombre_remitente REGEXP '^[a-zA-ZÁÉÍÓÚáéíóúÑñ ]*$'),
+  ADD CONSTRAINT chk_estado_mensaje
+  CHECK (`estado` IN ('Sin responder', 'En curso', 'Resuelto'));
 
 -- Triggers bajas lógicas
 
