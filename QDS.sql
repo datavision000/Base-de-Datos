@@ -300,7 +300,7 @@ ALTER TABLE `camionero`
   ADD CONSTRAINT `chk_correo_electronico`
   CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
   ADD CONSTRAINT chk_nombre_camionero
-  CHECK (nombre_completo REGEXP '^[a-zA-Z ]+$'),
+  CHECK (nombre_completo REGEXP '^[a-zA-ZÁÉÍÓÚáéíóúÑñ ]*$'),
   ADD CONSTRAINT `chk_telefono1`
   CHECK (`telefono` REGEXP '^[0-9]+$' OR `telefono` REGEXP '^\\+[0-9]+$'),
   ADD CONSTRAINT `chk_cedula`
@@ -354,7 +354,7 @@ ALTER TABLE `paquete`
   ADD CONSTRAINT `chk_paquete_positivo_peso`
   CHECK (`peso` >= 0),
   ADD CONSTRAINT chk_codigo_seguimiento
-  CHECK (codigo_seguimiento REGEXP '^[0-9]+$'),
+  CHECK (codigo_seguimiento REGEXP '^[A-Z0-9]*$'),
   ADD CONSTRAINT `chk_valores_permitidos_estado_paquete`
   CHECK (`estado` IN ('En almacén cliente', 'En camioneta (central)', 'En almacén central',
   'En almacén central (lote)', 'En almacén central (camión)', 'En camión (plataforma)', 'Entregado'));
@@ -363,15 +363,13 @@ ALTER TABLE `paquete`
 
 ALTER TABLE destino
   ADD CONSTRAINT chk_departamento_destino
-  CHECK (departamento_destino REGEXP '^[a-zA-Z ]+$'),
+  CHECK (departamento_destino REGEXP '^[a-zA-ZÁÉÍÓÚáéíóúÑñ ]*$'),
   ADD CONSTRAINT chk_ciudad_destino
-  CHECK (ciudad_destino REGEXP '^[a-zA-Z ]+$');
+  CHECK (ciudad_destino REGEXP '^[a-zA-ZÁÉÍÓÚáéíóúÑñ ]*$');
 
 ALTER TABLE `login`
   ADD CONSTRAINT `chk_correo_electronico2`
   CHECK (`mail` REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
-  ADD CONSTRAINT chk_nom_usu
-  CHECK (nom_usu REGEXP '^[a-zA-Z]+$'),
   ADD CONSTRAINT `chk_valores_permitidos_tipo_usu`
   CHECK (`tipo_usu` IN ('admin', 'almacenero', 'camionero', 'empresa'));
 
