@@ -187,8 +187,7 @@ CREATE TABLE `lleva` (
   `fecha_llegada` datetime DEFAULT NULL,
   `fecha_salida` datetime NOT NULL,
   `almacen_central_salida` int NOT NULL,
-  CONSTRAINT chk_fechas1_lleva CHECK (fecha_salida < fecha_llegada),
-  CONSTRAINT chk_fechas2_lleva CHECK (fecha_salida < fecha_entrega_ideal),
+  CONSTRAINT chk_fechas_lleva CHECK (fecha_salida < fecha_entrega_ideal),
   -- CONSTRAINT fecha_valida_entrega_ideal CHECK (fecha_entrega_ideal >= NOW()),
   -- CONSTRAINT fecha_valida_salida CHECK (fecha_salida >= NOW()),
   PRIMARY KEY (id_camion, fecha_entrega_ideal)
@@ -202,8 +201,7 @@ CREATE TABLE `recoge` (
   `fecha_salida` datetime NOT NULL,
   `fecha_vuelta` datetime NOT NULL,
   `almacen_central_salida` int NOT NULL,
-  CONSTRAINT chk_fechas1_recoge CHECK (fecha_salida < fecha_recogida),
-  CONSTRAINT chk_fechas2_recoge CHECK (fecha_salida < fecha_recogida_ideal),
+  CONSTRAINT chk_fechas_recoge CHECK (fecha_salida < fecha_recogida_ideal),
   -- CONSTRAINT fecha_valida_recogida_ideal CHECK (fecha_recogida_ideal >= NOW()),
   -- CONSTRAINT fecha_valida_salida2 CHECK (fecha_salida >= NOW()),
   PRIMARY KEY (id_camioneta, fecha_recogida_ideal)
@@ -515,126 +513,6 @@ BEGIN
     IF vehiculo_existente > 0 THEN
         SIGNAL SQLSTATE '45000';
     END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER solicitud_fecha_solicitud
-BEFORE INSERT ON solicitud
-FOR EACH ROW
-BEGIN
-   IF NEW.fecha_solicitud > NOW() THEN
-       SIGNAL SQLSTATE '45000';
-   END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER recoge_fecha_recogida
-BEFORE INSERT ON recoge
-FOR EACH ROW
-BEGIN
-   IF NEW.fecha_recogida > NOW() THEN
-       SIGNAL SQLSTATE '45000';
-   END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER lleva_fecha_llegada
-BEFORE INSERT ON lleva
-FOR EACH ROW
-BEGIN
-   IF NEW.fecha_llegada > NOW() THEN
-       SIGNAL SQLSTATE '45000';
-   END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER lleva_fecha_entrega_ideal
-BEFORE INSERT ON lleva
-FOR EACH ROW
-BEGIN
-   IF NEW.fecha_entrega_ideal < NOW() THEN
-       SIGNAL SQLSTATE '45000';
-   END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER lleva_fecha_salida
-BEFORE INSERT ON lleva
-FOR EACH ROW
-BEGIN
-   IF NEW.fecha_salida < NOW() THEN
-       SIGNAL SQLSTATE '45000';
-   END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER recoge_fecha_recogida_ideal
-BEFORE INSERT ON recoge
-FOR EACH ROW
-BEGIN
-   IF NEW.fecha_recogida_ideal < NOW() THEN
-       SIGNAL SQLSTATE '45000';
-   END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER recoge_fecha_salida
-BEFORE INSERT ON recoge
-FOR EACH ROW
-BEGIN
-   IF NEW.fecha_salida < NOW() THEN
-       SIGNAL SQLSTATE '45000';
-   END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER solicitud_fecha_recogida_ideal
-BEFORE INSERT ON solicitud
-FOR EACH ROW
-BEGIN
-   IF NEW.fecha_recogida_ideal < NOW() THEN
-       SIGNAL SQLSTATE '45000';
-   END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER maneja_fecha_inicio_manejo
-BEFORE INSERT ON maneja
-FOR EACH ROW
-BEGIN
-   IF NEW.fecha_inicio_manejo < NOW() THEN
-       SIGNAL SQLSTATE '45000';
-   END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER maneja_fecha_fin_manejo
-BEFORE INSERT ON maneja
-FOR EACH ROW
-BEGIN
-   IF NEW.fecha_fin_manejo < NOW() THEN
-       SIGNAL SQLSTATE '45000';
-   END IF;
 END;
 //
 DELIMITER ;

@@ -21,8 +21,8 @@ AND destino.ciudad_destino = "Melo";
 /*CONSULTA 2: PLATAFORMAS Y PAQUETES ENTREGADOS EN LAS MISMAS,
 2023, ORDENARLOS: LOS QUE RECIBIERON DE MÁS A MENOS.*/
 SELECT
-plataforma.id_plataforma
-plataforma.direccion AS direccion_plataforma
+plataforma.id_plataforma,
+plataforma.direccion AS direccion_plataforma,
 lleva.fecha_llegada,
 paquete.id_paquete,
 paquete.mail_destinatario,
@@ -53,38 +53,6 @@ WHERE
 lleva.fecha_llegada IS NOT NULL
 AND YEAR(lleva.fecha_llegada) = 2023
 ORDER BY subconsulta.cantidad_paquetes DESC;
-
-
-
--- plataforma.id_plataforma
--- plataforma.direccion as direccion_plataforma
--- lleva.fecha_llegada,
--- paquete.id_paquete,
--- paquete.mail_destinatario,
--- paquete.direccion,
--- paquete.fragil,
--- paquete.tipo,
--- paquete.detalles,
--- paquete.peso,
--- paquete.volumen,
--- CONCAT(destino.ciudad_destino, ', ', destino.departamento_destino) AS destino_paquete
--- FROM paquete
--- INNER JOIN destino ON paquete.id_destino = destino.id_destino
--- INNER JOIN forma ON paquete.id_paquete = forma.id_paquete
--- INNER JOIN lleva ON forma.id_lote = lleva.id_lote
--- INNER JOIN plataforma ON lleva.id_plataforma = plataforma.id_plataforma
--- INNER JOIN (
---     SELECT lleva.id_plataforma, COUNT(paquete.id_paquete) AS cantidad_paquetes
---     FROM paquete
---     INNER JOIN forma ON paquete.id_paquete = forma.id_paquete
---     INNER JOIN lleva ON forma.id_lote = lleva.id_lote
---     GROUP BY lleva.id_plataforma
--- ) AS subconsulta ON lleva.id_plataforma = subconsulta.id_plataforma
--- WHERE
--- lleva.fecha_llegada IS NOT NULL
--- AND lleva.hora_llegada IS NOT NULL
--- AND YEAR(lleva.fecha_llegada) = 2023
--- ORDER BY subconsulta.cantidad_paquetes DESC;
 
 /*CONSULTA 3: CAMIONES REGISTRADOS Y SU TAREA ACTUAL.*/
 SELECT

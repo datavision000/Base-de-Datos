@@ -1,17 +1,49 @@
-/*CONSULTA 1*/
-SELECT paquete.id_paquete, destino.departamento_destino, destino.ciudad_destino, paquete.estado
-FROM almacena
-INNER JOIN paquete ON almacena.id_paquete = paquete.id_paquete
+/*CONSULTA 1: PAQUETES Y SU ESTADO, QUE SE ENCUENTREN EN UNA PLATAFORMA X*/
+SELECT
+paquete.id_paquete,
+paquete.estado,
+paquete.fragil,
+paquete.tipo,
+paquete.detalles,
+paquete.volumen,
+paquete.peso,
+paquete.direccion AS direccion_paquete,
+paquete.mail_destinatario,
+paquete.fecha_recibido
+FROM paquete
 INNER JOIN destino ON paquete.id_destino = destino.id_destino
-WHERE almacena.id_almacen_cliente = 1;
+INNER JOIN forma ON paquete.id_paquete = forma.id_paquete
+INNER JOIN transporta ON forma.id_lote = transporta.id_lote
+INNER JOIN camion ON transporta.id_camion = camion.id_camion
+INNER JOIN lleva ON camion.id_camion = lleva.id_camion
+INNER JOIN plataforma ON lleva.id_plataforma = plataforma.id_plataforma
+WHERE
+paquete.estado = "Entregado"
+AND plataforma.id_plataforma = 1;
 
-/*CONSULTA 2*/
-SELECT lote.id_lote, lote.cant_paquetes, lote.volumen, lote.peso, lote.fragil, lote.tipo, lote.detalles, lleva.fecha_llegada, lleva.hora_llegada
-FROM lleva
-INNER JOIN lote ON lleva.id_lote = lote.id_lote
-WHERE MONTH(lleva.fecha_llegada) = 8 AND YEAR(lleva.fecha_llegada) = 2023 AND lleva.id_plataforma = 1;
+/*CONSULTA 2: LOTES QUE LLEGARON A UNA PLATAFORMA X, 08/2023*/
+SELECT
+lote.id_lote,
+lote.estado,
+lote.fragil,
+lote.tipo,
+lote.detalles,
+vehiculo.matricula AS matricula_camion,
+lleva.fecha_llegada
+FROM lote
+INNER JOIN transporta ON lote.id_lote = transporta.id_lote
+INNER JOIN camion ON transporta.id_camion = camion.id_camion
+INNER JOIN vehiculo ON camion.id_camion = vehiculo.id_vehiculo
+INNER JOIN lleva ON camion.id_camion = lleva.id_camion
+INNER JOIN plataforma ON lleva.id_plataforma = plataforma.id_plataforma
+WHERE
+MONTH(lleva.fecha_llegada) = 8
+AND YEAR(lleva.fecha_llegada) = 2023
+AND plataforma.id_plataforma = 1;
 
-/*CONSULTA 3*/
+
+/*CONSULTA 3: CAMIONES QUE ACTUALMENTE SE ENCUENTREN EN RUTA,
+JUNTO CON SU CARGA, DESTINO Y HORARIO ESTIMADO DE LLEGADA.*/
 
 
 /*CONSULTA 4*/
@@ -20,22 +52,37 @@ WHERE MONTH(lleva.fecha_llegada) = 8 AND YEAR(lleva.fecha_llegada) = 2023 AND ll
 /*CONSULTA 5*/
 
 
-/*CONSULTA 6*/
-
+/*CONSULTA 6: PAQUETES ENTREGADOS, 07/2023, ORDENAR POR FECHA DE ENTREGA (DESC.)*/
+SELECT
+paquete.id_paquete,
+paquete.estado,
+paquete.fragil,
+paquete.tipo,
+paquete.detalles,
+paquete.volumen,
+paquete.peso,
+paquete.direccion AS direccion_paquete,
+paquete.mail_destinatario,
+paquete.fecha_recibido
+FROM paquete
+INNER JOIN forma ON paquete.id_paquete = forma.id_paquete
+INNER JOIN transporta ON forma.id_lote = transporta.id_lote
+INNER JOIN camion ON transporta.id_camion = camion.id_camion
+INNER JOIN lleva ON camion.id_camion = lleva.id_camion
+WHERE
+MONTH(paquete.fecha_recibido) = 7
+AND YEAR(paquete.fecha_recibido) = 2023
+AND paquete.estado = "Entregado"
+ORDER BY
+paquete.fecha_recibido DESC;
 
 /*CONSULTA 7*/
 
 
 /*CONSULTA 8*/
-SELECT plataforma.id_plataforma, plataforma.direccion, destino.departamento_destino, destino.ciudad_destino, plataforma.telefono, trayecto.distancia_recorrida, trayecto.duracion_total
-FROM llega
-INNER JOIN trayecto ON llega.id_trayecto = trayecto.id_trayecto
-INNER JOIN plataforma ON llega.id_plataforma = plataforma.id_plataforma
-INNER JOIN destino ON plataforma.ubicacion = destino.id_destino
-WHERE llega.id_trayecto = 1;
+
 
 /*CONSULTA 9*/
 
 
 /*CONSULTA 10*/
-
