@@ -128,7 +128,8 @@ CREATE TABLE `login` (
   `nom_usu` varchar(30) NOT NULL UNIQUE,
   `mail` varchar(45) NOT NULL UNIQUE,
   `tipo_usu` varchar(30) NOT NULL,
-  `contrasenia` varchar(75) NOT NULL
+  `contrasenia` varchar(75) NOT NULL,
+  `token` varchar (60) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `tiene` (
@@ -860,37 +861,9 @@ DELIMITER ;
 
 CREATE VIEW `mostrar_camiones`
 AS
-SELECT
-    camion.id_camion,
-    SUM(paquete.peso) AS peso_total_actual_camion,
-    SUM(paquete.volumen) AS volumen_total_actual_camion,
-    vehiculo.matricula,
-    vehiculo.volumen_maximo,
-    vehiculo.peso_soportado,
-    vehiculo.estado
-FROM camion
-INNER JOIN vehiculo ON camion.id_camion = vehiculo.id_vehiculo
-LEFT JOIN transporta ON camion.id_camion = transporta.id_camion
-LEFT JOIN lote ON transporta.id_lote = lote.id_lote
-LEFT JOIN (
-    SELECT
-        forma.id_lote,
-        SUM(paquete.peso) AS peso_lote
-    FROM forma
-    LEFT JOIN paquete ON forma.id_paquete = paquete.id_paquete
-    GROUP BY forma.id_lote
-) AS pesos_lotes ON lote.id_lote = pesos_lotes.id_lote
-LEFT JOIN (
-    SELECT
-        forma.id_lote,
-        SUM(paquete.volumen) AS volumen_lote
-    FROM forma
-    LEFT JOIN paquete ON forma.id_paquete = paquete.id_paquete
-    GROUP BY forma.id_lote
-) AS volumenes_lotes ON lote.id_lote = volumenes_lotes.id_lote
-LEFT JOIN forma ON lote.id_lote = forma.id_lote
-LEFT JOIN paquete ON forma.id_paquete = paquete.id_paquete
-GROUP BY camion.id_camion;
+SELECT camion.id_camion, vehiculo.matricula, vehiculo.volumen_maximo, vehiculo.peso_soportado, vehiculo.estado
+FROM `vehiculo`
+INNER JOIN camion ON vehiculo.id_vehiculo = camion.id_camion;
 
 CREATE VIEW `mostrar_camionetas`
 AS
@@ -900,7 +873,16 @@ INNER JOIN camioneta ON vehiculo.id_vehiculo = camioneta.id_camioneta;
 
 CREATE VIEW `mostrar_lotes`
 AS
-SELECT lote.id_lote, SUM(paquete.peso) AS peso, SUM(paquete.volumen) AS volumen, COUNT(forma.id_paquete) AS cant_paquetes, lote.tipo, lote.estado, lote.fragil, lote.detalles, transporta.id_camion
+SELECT
+    lote.id_lote,
+    COALESCE(SUM(paquete.peso), 0) AS peso,
+    COALESCE(SUM(paquete.volumen), 0) AS volumen,
+    COALESCE(COUNT(forma.id_paquete), 0) AS cant_paquetes,
+    lote.tipo,
+    lote.estado,
+    lote.fragil,
+    lote.detalles,
+    transporta.id_camion
 FROM lote
 LEFT JOIN forma ON lote.id_lote = forma.id_lote
 LEFT JOIN paquete ON forma.id_paquete = paquete.id_paquete
