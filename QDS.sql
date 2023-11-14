@@ -17,7 +17,6 @@ DROP TABLE IF EXISTS `almacena1`;
 DROP TABLE IF EXISTS `destino`;
 DROP TABLE IF EXISTS `empresa_cliente`;
 DROP TABLE IF EXISTS `forma`;
-DROP TABLE IF EXISTS `llega`;
 DROP TABLE IF EXISTS `lleva`;
 DROP TABLE IF EXISTS `login`;
 DROP TABLE IF EXISTS `lote`;
@@ -27,7 +26,7 @@ DROP TABLE IF EXISTS `recoge`;
 DROP TABLE IF EXISTS `solicitud`;
 DROP TABLE IF EXISTS `tiene`;
 DROP TABLE IF EXISTS `transporta`;
-DROP TABLE IF EXISTS `trayecto`;
+DROP TABLE IF EXISTS `mensaje`;
 DROP VIEW IF EXISTS `mostrar_camiones`;
 DROP VIEW IF EXISTS `mostrar_camionetas`;
 DROP VIEW IF EXISTS `mostrar_lotes`;
@@ -124,15 +123,6 @@ CREATE TABLE `destino` (
   PRIMARY KEY (`id_destino`, `departamento_destino`, `ciudad_destino`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `trayecto` (
-  `id_trayecto` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `destino` varchar(80) NOT NULL,
-  `destinos_intermedios` MEDIUMTEXT DEFAULT NULL,
-  `distancia_recorrida` int NOT NULL,
-  `duracion_total` int NOT NULL,
-  `estado` varchar(7) DEFAULT 'En uso' NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 CREATE TABLE `login` (
   `id_usuario` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `nom_usu` varchar(30) NOT NULL UNIQUE,
@@ -177,12 +167,6 @@ CREATE TABLE `maneja` (
 CREATE TABLE `transporta` (
 	`id_lote` int PRIMARY KEY NOT NULL,
   `id_camion` int NOT NULL
-);
-
-CREATE TABLE `llega` (
-	`id_trayecto` int NOT NULL,
-  `id_plataforma` int NOT NULL,
-   PRIMARY KEY (id_trayecto, id_plataforma)
 );
 
 CREATE TABLE `lleva` (
@@ -264,10 +248,6 @@ ALTER TABLE `maneja`
 ALTER TABLE `transporta`
     ADD CONSTRAINT `fk_id_lote3` FOREIGN KEY (id_lote) REFERENCES lote(id_lote) ON DELETE NO ACTION ON UPDATE NO ACTION,
     ADD CONSTRAINT `fk_id_camion2` FOREIGN KEY (id_camion) REFERENCES camion(id_camion) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-ALTER TABLE `llega`
-    ADD CONSTRAINT `fk_id_trayecto3` FOREIGN KEY (id_trayecto) REFERENCES trayecto(id_trayecto) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    ADD CONSTRAINT `fk_id_plataforma2` FOREIGN KEY (id_plataforma) REFERENCES plataforma(id_plataforma) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `lleva`
     ADD CONSTRAINT `fk_id_camion3` FOREIGN KEY (id_camion) REFERENCES camion(id_camion) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -404,12 +384,6 @@ ALTER TABLE `lote`
   CHECK (`fragil` IN ('Si', 'No')),
   ADD CONSTRAINT `chk_valores_permitidos_estado_lote`
   CHECK (`estado` IN ('En almacén central', 'En almacén central (camión)', 'En camión (plataforma)', 'Entregado'));
-
--- Checks trayecto
-
-ALTER TABLE trayecto
-  ADD CONSTRAINT `chk_valores_permitidos_trayecto_estado`
-  CHECK (`estado` IN ('En uso', 'De baja'));
 
 -- Checks solicitud
 
@@ -605,37 +579,10 @@ DELIMITER ;
 
 DELIMITER //
 
+
+DELIMITER //
+
 CREATE TRIGGER baja_logica_plataforma1
-BEFORE INSERT ON llega
-FOR EACH ROW
-BEGIN
-  IF (SELECT estado FROM plataforma WHERE id_plataforma = NEW.id_plataforma) = 'De baja'
-  THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'No se puede asignar una plataforma que esté dada de baja...';
-  END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER baja_logica_plataforma2
-BEFORE UPDATE ON llega
-FOR EACH ROW
-BEGIN
-  IF (SELECT estado FROM plataforma WHERE id_plataforma = NEW.id_plataforma) = 'De baja'
-  THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'No se puede asignar una plataforma que esté dada de baja...';
-  END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER baja_logica_plataforma3
 BEFORE INSERT ON lleva
 FOR EACH ROW
 BEGIN
@@ -650,7 +597,7 @@ DELIMITER ;
 
 DELIMITER //
 
-CREATE TRIGGER baja_logica_plataforma4
+CREATE TRIGGER baja_logica_plataforma2
 BEFORE UPDATE ON lleva
 FOR EACH ROW
 BEGIN
@@ -726,36 +673,6 @@ DELIMITER ;
 
 DELIMITER //
 
-CREATE TRIGGER baja_logica_trayecto
-BEFORE INSERT ON llega
-FOR EACH ROW
-BEGIN
-  IF (SELECT estado FROM trayecto WHERE id_trayecto = NEW.id_trayecto) = 'De baja'
-  THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'No se puede asignar un trayecto que esté dado de baja...';
-  END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER baja_logica_trayecto2
-BEFORE UPDATE ON llega
-FOR EACH ROW
-BEGIN
-  IF (SELECT estado FROM trayecto WHERE id_trayecto = NEW.id_trayecto) = 'De baja'
-  THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'No se puede asignar un trayecto que esté dado de baja...';
-  END IF;
-END;
-//
-DELIMITER ;
-
-DELIMITER //
-
 CREATE TRIGGER baja_logica_camion3
 BEFORE INSERT ON lleva
 FOR EACH ROW
@@ -783,7 +700,6 @@ BEGIN
 END;
 //
 DELIMITER ;
-
 
 DELIMITER //
 
@@ -814,8 +730,6 @@ BEGIN
 END;
 //
 DELIMITER ;
-
-/* TERMINAR TRIGGERS BAJA LOGICA */
 
 -- Otros triggers
 

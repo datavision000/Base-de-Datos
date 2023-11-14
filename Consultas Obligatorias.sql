@@ -163,14 +163,17 @@ WHERE
 id_camion IS NOT NULL
 AND (maneja.id_maneja IS NULL OR maneja.fecha_fin_manejo < CURDATE() OR maneja.fecha_fin_manejo IS NULL);
 
-/*CONSULTA 10: PLATAFORMAS QUE SE ENCUENTRAN EN UN RECORRIDO X.*/
-SELECT plataforma.id_plataforma,
+/*CONSULTA 10: PLATAFORMAS QUE SE ENCUENTRAN EN UN TRAYECTO X.*/
+SELECT
+plataforma.id_plataforma,
 plataforma.direccion,
 CONCAT(destino.ciudad_destino, ', ', destino.departamento_destino) AS ubicacion,
 plataforma.volumen_maximo,
 plataforma.telefono
-FROM plataforma
-INNER JOIN llega ON plataforma.id_plataforma = llega.id_plataforma
+FROM lleva
+INNER JOIN plataforma ON lleva.id_plataforma = plataforma.id_plataforma
 INNER JOIN destino ON plataforma.ubicacion = destino.id_destino
 WHERE
-id_trayecto = 1;
+id_camion = 1
+AND fecha_salida = '2023-05-23 10:15:00'
+AND almacen_central_salida = 1;

@@ -207,20 +207,6 @@ VALUES
 ('6', '2'),
 ('9', '3');
 
-INSERT INTO `trayecto` (`destino`, `destinos_intermedios`, `distancia_recorrida`, `duracion_total`)
-VALUES
-('Tacuarembó', 'Canelones', 13000, 400),
-('Artigas', NULL, 25000, 1000),
-('Estadio Centenario', 'Thiebaut 1869', 6, 25),
-('Paysandú', 'Estadio Centenario', 18000, 700),
-('Felipe Sanguinetti 1884', 'Thiebaut 1869, Laureles 101', 13000, 400);
-
-INSERT INTO `llega` (`id_trayecto`, `id_plataforma`)
-VALUES
-('1', '1'),
-('1', '2'),
-('2', '1');
-
 -- Ingreso de tuplas en tabla 'tiene'
 
 START TRANSACTION;
