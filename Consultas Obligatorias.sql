@@ -1,4 +1,7 @@
 /*CONSULTA 1: PAQUETES ENTREGADOS, 05/2023, DESTINO: CIUDAD DE MELO.*/
+
+-- SQL
+
 SELECT
 paquete.id_paquete,
 paquete.mail_destinatario,
@@ -18,8 +21,15 @@ AND MONTH(paquete.fecha_recibido) = 5
 AND YEAR(paquete.fecha_recibido) = 2023
 AND destino.ciudad_destino = "Melo";
 
+-- Álgebra Relacional
+
+
+
 /*CONSULTA 2: PLATAFORMAS Y PAQUETES ENTREGADOS EN LAS MISMAS,
 2023, ORDENARLOS: LOS QUE RECIBIERON DE MÁS A MENOS.*/
+
+-- SQL
+
 SELECT
 plataforma.id_plataforma,
 plataforma.direccion AS direccion_plataforma,
@@ -54,7 +64,14 @@ lleva.fecha_llegada IS NOT NULL
 AND YEAR(lleva.fecha_llegada) = 2023
 ORDER BY subconsulta.cantidad_paquetes DESC;
 
+-- Álgebra Relacional
+
+
+
 /*CONSULTA 3: CAMIONES REGISTRADOS Y SU TAREA ACTUAL.*/
+
+-- SQL
+
 SELECT
 camion.id_camion,
 vehiculo.matricula,
@@ -62,7 +79,14 @@ vehiculo.estado
 FROM vehiculo
 INNER JOIN camion ON camion.id_camion = vehiculo.id_vehiculo;
 
+-- Álgebra Relacional
+
+
+
 /*CONSULTA 4: CAMIONES QUE VISITARON X PLATAFORMA (JUNIO).*/
+
+-- SQL
+
 SELECT
 plataforma.id_plataforma,
 plataforma.direccion AS direccion_plataforma,
@@ -79,7 +103,14 @@ WHERE
 MONTH(fecha_llegada) = 6
 AND lleva.id_plataforma = 4;
 
+-- Álgebra Relacional
+
+
+
 /*CONSULTA 5: DESTINO, LOTE, PLATAFORMA DESTINO Y CAMIÓN QUE TRANSPORTA UN PAQUETE X.*/
+
+-- SQL
+
 SELECT
 paquete.id_paquete,
 paquete.direccion AS direccion_paquete,
@@ -101,9 +132,16 @@ LEFT JOIN plataforma ON lleva.id_plataforma = plataforma.id_plataforma
 WHERE
 paquete.id_paquete = 9;
 
+-- Álgebra Relacional
+
+
+
 /*CONSULTA 6: ID PAQUETE, ID LOTE, MATRICULA DEL CAMION QUE LO TRANSPORTA,
 PLATAFORMA DESTINO, DIRECCIÓN FINAL Y EL ESTADO DEL ENVÍO,
 PARA LOS PAQUETES QUE SE RECIBIERON HACE MAS DE 3 DÍAS.*/
+
+-- SQL
+
 SELECT
 paquete.id_paquete,
 forma.id_lote,
@@ -126,7 +164,14 @@ WHERE
 lleva.fecha_llegada IS NOT NULL
 AND DATEDIFF(CURDATE(), lleva.fecha_llegada) > 3;
 
+-- Álgebra Relacional
+
+
+
 /*CONSULTA 7: PAQUETES SIN LOTE ASIGNADO Y SUS FECHAS RECIBIDO.*/
+
+-- SQL
+
 SELECT
 id_paquete,
 mail_destinatario,
@@ -141,7 +186,12 @@ FROM paquete
 WHERE
 id_paquete NOT IN (SELECT id_paquete FROM forma);
 
+-- Álgebra Relacional
+
 /*CONSULTA 8: MATRICULA DE LOS CAMIONES QUE SE ENCUENTRAN FUERA DE SERVICIO.*/
+
+-- SQL
+
 SELECT
 matricula,
 estado
@@ -149,7 +199,14 @@ FROM vehiculo
 WHERE
 estado = "Fuera de servicio";
 
+-- Álgebra Relacional
+
+
+
 /*CONSULTA 9: CAMIONES SIN CONDUCTOR ASIGNADO Y SU ESTADO OPERATIVO.*/
+
+-- SQL
+
 SELECT
 camion.id_camion,
 vehiculo.matricula,
@@ -163,7 +220,12 @@ WHERE
 id_camion IS NOT NULL
 AND (maneja.id_maneja IS NULL OR maneja.fecha_fin_manejo < CURDATE() OR maneja.fecha_fin_manejo IS NULL);
 
+-- Álgebra Relacional
+
 /*CONSULTA 10: PLATAFORMAS QUE SE ENCUENTRAN EN UN TRAYECTO X.*/
+
+-- SQL
+
 SELECT
 plataforma.id_plataforma,
 plataforma.direccion,
@@ -177,3 +239,6 @@ WHERE
 id_camion = 1
 AND fecha_salida = '2023-05-23 10:15:00'
 AND almacen_central_salida = 1;
+
+-- Álgebra Relacional
+
