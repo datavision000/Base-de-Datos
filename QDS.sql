@@ -287,7 +287,7 @@ ALTER TABLE `vehiculo`
   ADD CONSTRAINT chk_peso_soportado_vehiculo
   CHECK (peso_soportado > 0),
   ADD CONSTRAINT `chk_valores_permitidos_estado_vehiculo`
-  CHECK (`estado` IN ('Disponible', 'Fuera de servicio', 'Camionero asignado', 'De baja'));
+  CHECK (`estado` IN ('Disponible', 'Fuera de servicio', 'En transcurso', 'De baja'));
 
 -- Checks camionero
 
@@ -301,7 +301,7 @@ ALTER TABLE `camionero`
   ADD CONSTRAINT `chk_cedula`
   CHECK (`cedula` REGEXP '^[0-9]+$'),
   ADD CONSTRAINT `chk_valores_permitidos_estado_camionero`
-  CHECK (`estado` IN ('Disponible', 'Vehículo asignado', 'No disponible', 'De baja'));
+  CHECK (`estado` IN ('Disponible', 'En transcurso', 'No disponible', 'De baja'));
 
 -- Checks almacen central
 
@@ -723,7 +723,7 @@ CREATE TRIGGER baja_logica_camioneta2
 BEFORE UPDATE ON recoge
 FOR EACH ROW
 BEGIN
-  IF (SELECT estado FROM camioneta WHERE id_camioneta = NEW.id_camioneta) = 'De baja'
+  IF (SELECT estado FROM vehiculo WHERE id_vehiculo = NEW.id_camioneta) = 'De baja'
   THEN
     SIGNAL SQLSTATE '45000'
     SET MESSAGE_TEXT = 'No se puede asignar una camioneta que esté dada de baja...';

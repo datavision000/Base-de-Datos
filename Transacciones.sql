@@ -33,10 +33,10 @@ START TRANSACTION;
 INSERT INTO `almacen_cliente` (`direccion`, `telefono`)
 VALUES
 ("Felipe Sanguinetti 2474", "095086226"),
-("Av. Italia 7777", "094839173"),
-("Av. José Batlle y Ordoñez 694", "092849372"),
+("Av. Italia 1002", "094839173"),
+("Av. José Batlle y Ordoñez 1203", "092849372"),
 ("Neyra 1492", "097593271"),
-("Comodoro Coe", "092456821");
+("Comodoro Coe 1276", "092456821");
 
 COMMIT;
 
@@ -54,7 +54,7 @@ VALUES
 ("Porongos 213", 100000, 1, "097857214"),
 ("Leguizamón 1872", 100000, 1, "093349851"),
 ("José Gómez 222", 100000, 2, "094829183"),
-("Vuritos 1432", 100000, 4, "098493821"),
+("Neyra 1432", 100000, 4, "098493821"),
 ("Avenida Brasil 1832", 100000, 1, "091238495");
 
 
@@ -155,22 +155,22 @@ START TRANSACTION;
 
 INSERT INTO `paquete` (`codigo_seguimiento`, `tipo`, `volumen`, `peso`, `direccion`, `fragil`, `detalles`, `mail_destinatario`, `estado`, `id_destino`)
 VALUES
-("FK2L5KSD30FL", 'Liquido', '88', '100', 'Av. Italia 3474', 'Si', 'Nitrógeno líquido', 'hhamilton@gmail.com', 'En almacén central (Lote)', 1),
+("FK2L5KSD30FL", 'Liquido', '88', '100', 'Av. Italia 2474', 'Si', 'Nitrógeno líquido', 'hhamilton@gmail.com', 'En almacén central (Lote)', 1),
 ("39ALFJ281745", 'Vidrio', '80', '22', 'Estivao 1204', 'Si', 'Ventanas blancas', 'peterparker44@gmail.com', 'En almacén central (Lote)', 1);
 INSERT INTO `paquete` (`codigo_seguimiento`,`tipo`, `volumen`, `peso`, `direccion`, `fragil`, `detalles`, `mail_destinatario`, `id_destino`, `estado`)
 VALUES
-("3KA9GL2759AJ", 'Vidrio', '78', '66', 'Rivera 5675', 'Si', 'Ventanas negras', 'charlesion566@gmail.com', 1, 'En almacén central (Lote)');
+("3KA9GL2759AJ", 'Vidrio', '78', '66', 'Rivera 1275', 'Si', 'Ventanas negras', 'charlesion566@gmail.com', 1, 'En almacén central (Lote)');
 INSERT INTO `paquete` (`codigo_seguimiento`, `volumen`, `peso`, `direccion`, `fragil`, `mail_destinatario`, `estado`, `id_destino`)
 VALUES
 ("FKALO83NAK17", '800', '500', 'Av. José Batlle y Ordoñez 1302', 'No', 'fredericJhonson@gmail.com', 'En almacén central (Lote)', 1),
-("GLAPRO492032", '55', '500', 'Av. Italia 3423', 'No', 'jelou763@gmail.com', 'En almacén central (Lote)', 1),
-("FALF928FKAPW", '8030', '500', 'Thiebaut 4532', 'No', 'carl@gmail.com', 'En almacén central (Lote)', 1),
-("HLFK33456LAK", '8020', '500', 'Estivao 222', 'No', 'ruti@gmail.com', 'En almacén central (Lote)', 1);
+("GLAPRO492032", '55', '500', 'Av. Italia 223', 'No', 'jelou763@gmail.com', 'En almacén central (Lote)', 1),
+("FALF928FKAPW", '8030', '500', 'Thiebaut 1869', 'No', 'carl@gmail.com', 'En almacén central (Lote)', 1),
+("HLFK33456LAK", '8020', '500', 'Estivao 1932', 'No', 'ruti@gmail.com', 'En almacén central (Lote)', 1);
 INSERT INTO `paquete` (`codigo_seguimiento`, `volumen`, `peso`, `direccion`, `fragil`, `mail_destinatario`, `id_destino`, `estado`)
 VALUES
-("FLAOPLDJSPOA", '22', '500', 'Laureles 2111', 'No', 'nast@gmail.com', 4, 'En almacén central (Lote)'),
-("FAPO34OJI348", '66', '500', 'Juaripé 2312', 'No', 'fartux@gmail.com', 4, 'En almacén central (Lote)'),
-("XMCPAO4IO3J2", '99', '400', 'Calle 3242', 'No', 'lalo2312@gmail.com', 1, 'En almacén central (Lote)');
+("FLAOPLDJSPOA", '22', '500', 'Laureles 222', 'No', 'nast@gmail.com', 4, 'En almacén central (Lote)'),
+("FAPO34OJI348", '66', '500', 'Hipólito Yrigoyen 1290', 'No', 'fartux@gmail.com', 4, 'En almacén central (Lote)'),
+("XMCPAO4IO3J2", '99', '400', 'Iguá 1841', 'No', 'lalo2312@gmail.com', 1, 'En almacén central (Lote)');
 
 COMMIT;
 
