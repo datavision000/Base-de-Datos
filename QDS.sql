@@ -128,8 +128,7 @@ CREATE TABLE `login` (
   `nom_usu` varchar(30) NOT NULL UNIQUE,
   `mail` varchar(45) NOT NULL UNIQUE,
   `tipo_usu` varchar(30) NOT NULL,
-  `contrasenia` varchar(75) NOT NULL,
-  `token` varchar (60) DEFAULT NULL
+  `contrasenia` varchar(75) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `tiene` (
@@ -189,7 +188,7 @@ CREATE TABLE `recoge` (
   `fecha_recogida_ideal` datetime NOT NULL,
   `fecha_recogida` datetime DEFAULT NULL,
   `fecha_salida` datetime NOT NULL,
-  `fecha_vuelta` datetime NOT NULL,
+  `fecha_vuelta` datetime DEFAULT NULL,
   `almacen_central_salida` int NOT NULL,
   CONSTRAINT chk_fechas_recoge CHECK (fecha_salida < fecha_recogida_ideal),
   -- CONSTRAINT fecha_valida_recogida_ideal CHECK (fecha_recogida_ideal >= NOW()),
